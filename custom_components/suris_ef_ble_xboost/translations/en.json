@@ -1,17 +1,17 @@
 {
-  "title": "Suris EcoFlow BLE — Unofficial Beta",
+  "title": "Suris EcoFlow BLE — 100% Local BLE (Unofficial Beta)",
   "config": {
     "step": {
       "user": {
         "title": "DELTA 2 Max",
-        "description": "UNOFFICIAL, UNSTABLE BETA. Not an EcoFlow product or an official EcoFlow BLE release. Use with caution and at your own risk; back up Home Assistant before installation. Provided without warranties; authors and contributors accept no liability to the maximum extent permitted by applicable law.\n\nChoose a discovered station. If the list is empty, turn it on and enter its Bluetooth address.",
+        "description": "100% local BLE monitoring and control. No internet or EcoFlow cloud connection is needed during operation. No separate ef_ble is required. Cloud sign-in during setup is optional: you can enter a User ID manually.\n\nUNOFFICIAL, UNSTABLE BETA. Not an EcoFlow product or an official EcoFlow BLE release. Use with caution and at your own risk; back up Home Assistant before installation. Provided without warranties; authors and contributors accept no liability to the maximum extent permitted by applicable law.\n\nChoose a discovered station. If the list is empty, turn it on and enter its Bluetooth address.",
         "data": {
           "address": "Station / Bluetooth address"
         }
       },
       "bluetooth_confirm": {
         "title": "DELTA 2 Max discovered",
-        "description": "UNOFFICIAL, UNSTABLE BETA. Not an EcoFlow product or an official EcoFlow BLE release. Use with caution and at your own risk; back up Home Assistant before installation. Provided without warranties; authors and contributors accept no liability to the maximum extent permitted by applicable law.\n\nSerial number: {serial_number}\nBluetooth address: {address}\n\nContinue to choose EcoFlow login or manual User ID."
+        "description": "100% local BLE monitoring and control. No internet or EcoFlow cloud connection is needed during operation. No separate ef_ble is required. Cloud sign-in during setup is optional: you can enter a User ID manually.\n\nUNOFFICIAL, UNSTABLE BETA. Not an EcoFlow product or an official EcoFlow BLE release. Use with caution and at your own risk; back up Home Assistant before installation. Provided without warranties; authors and contributors accept no liability to the maximum extent permitted by applicable law.\n\nSerial number: {serial_number}\nBluetooth address: {address}\n\nContinue to choose EcoFlow login or manual User ID."
       },
       "auth": {
         "title": "EcoFlow authentication",
