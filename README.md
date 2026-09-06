@@ -1,125 +1,128 @@
 # Suris EcoFlow BLE 0.8.0b4
 
 > [!CAUTION]
-> **НЕОФИЦИАЛЬНАЯ НЕСТАБИЛЬНАЯ БЕТА-ВЕРСИЯ — UNOFFICIAL / UNSTABLE BETA.**
-> Используй осторожно и на свой риск. Эта сборка не проходила испытаний на реальной станции.
-> Проект не одобрен EcoFlow и не является официальным релизом EcoFlow BLE / ha-ef-ble.
-> **Гарантий нет. В максимально допустимых законом пределах авторы и участники
-> не несут никакой ответственности за использование и его последствия.**
-> Прочитай [полный отказ от гарантий и ответственности](DISCLAIMER.md) до установки.
+> **UNOFFICIAL / UNSTABLE BETA — USE WITH CAUTION AND AT YOUR OWN RISK.**
+> The author has tested the integration on a real station. It remains an unstable beta.
+> This project is not endorsed by EcoFlow and is not an official EcoFlow BLE / ha-ef-ble release.
+> **No warranties are provided. To the maximum extent permitted by law, the authors
+> and contributors accept no liability for its use or consequences.**
+> Read the [full disclaimer](DISCLAIMER.md) before installation.
 
-Независимая интеграция Home Assistant для **DELTA 2 Max и одной Extra Battery
-в слоте 1**. Работает через Bluetooth; отдельная установка `ef_ble` не требуется.
-Основа протокола — EcoFlow BLE 1.1.1. Эта сборка предназначена для осторожного
-тестирования, а не для критичных нагрузок или испытаний без присмотра.
+An independent Home Assistant integration for **EcoFlow DELTA 2 Max and one
+Extra Battery in slot 1**, using Bluetooth. A separate `ef_ble` installation is
+not required. The protocol implementation is based on EcoFlow BLE 1.1.1.
+Use this beta for supervised testing with noncritical loads.
 
-## Спасибо создателям EcoFlow BLE
+## Thanks to the EcoFlow BLE creators
 
-**Большое спасибо [rabits](https://github.com/rabits) и всем участникам
-[EcoFlow BLE / ha-ef-ble](https://github.com/rabits/ha-ef-ble)** за реализацию
-Bluetooth-протокола, поддержку устройств и развитие проекта. Отдельная
-благодарность **[GnoX](https://github.com/GnoX)** за работу над соединением
-и авторизацией, отмеченную в [релизе 1.1.1](https://github.com/rabits/ha-ef-ble/releases/tag/v1.1.1).
-Без их работы эта интеграция не была бы возможна. Suris не приписывает себе
-авторство исходной библиотеки; изменения Suris поддерживаются отдельно.
+**Thank you to [rabits](https://github.com/rabits) and everyone contributing to
+[EcoFlow BLE / ha-ef-ble](https://github.com/rabits/ha-ef-ble)** for the Bluetooth
+protocol implementation, device support, and continued development.
+Special thanks to **[GnoX](https://github.com/GnoX)** for the connection and
+authentication work credited in the [1.1.1 release](https://github.com/rabits/ha-ef-ble/releases/tag/v1.1.1).
+This integration would not be possible without their work. Suris does not claim
+authorship of the upstream library; Suris modifications are maintained separately.
+These acknowledgments do not imply endorsement of this project.
 
-## Возможности и ограничения
+## Features and limitations
 
-| Устройство | Сущности |
+| Device | Entities defined in code |
 | --- | --- |
-| DELTA 2 Max | 37 датчиков, 5 переключателей, 4 числовых настройки, 2 выбора тока |
-| Extra Battery 1 | 29 датчиков после первого пакета данных батареи |
-| Extra Battery 2 и другие модели | Не поддерживаются этой сборкой |
+| DELTA 2 Max | 37 sensors, 5 switches, 4 number controls, 2 input-current selectors |
+| Extra Battery 1 | 29 sensors, created after battery detection |
+| Extra Battery 2 and other models | Not supported by this build |
 
-Все 66 датчиков включены по умолчанию. До получения соответствующих данных
-от станции значение может быть неизвестным или недоступным. Разница мощности
-рассчитывается как **Output − Input**. Обновление сохраняет domain, unique_id,
-состав сущностей и существующую логику команд.
+The code defines up to 66 sensors. **This does not mean that all 66 are enabled
+in an installed integration.** Some entities may be disabled in Home Assistant.
+Extra Battery 1 sensors appear after its data is detected. Readings can remain
+unknown or unavailable until the station sends the corresponding data.
+Power difference is calculated as **Output minus Input**. The update preserves
+the integration domain, unique IDs, entity inventory, and existing command logic.
 
-**Car Input 2 остаётся экспериментальным.** Изменение тока обоих входов доступно
-только после получения свежих допустимых лимитов для обоих входов. Это ограничение
-не доказывает правильность интерпретации второго входа на любой прошивке.
+**Car Input 2 remains experimental.** Both current selectors require fresh,
+valid limits for both inputs before sending a command. This check does not
+establish that the second input is interpreted correctly on every firmware.
 
-Требуется **Home Assistant Core 2026.8+**, рабочий Bluetooth-адаптер или прокси.
-Offline-тесты используют Core 2026.9.1 / Python 3.14.6 и имитируют BLE и облако.
-Они не подтверждают работу оборудования, облачного входа или всех прошивок.
+Requires **Home Assistant Core 2026.8+** and a working Bluetooth adapter or proxy.
 
-## Установка и обновление
+## Testing status
+
+**The author has tested the integration on a real EcoFlow DELTA 2 Max station.**
+This does not establish coverage of every feature, firmware, or configuration.
+The release remains an **unofficial, unstable beta**.
+
+Additional automated checks for publication ran on Home Assistant Core 2026.9.1
+and Python 3.14.6: **20 tests passed**. Those automated checks used mocked BLE
+and cloud calls; they did not exercise real hardware or a live cloud login.
+The recorded results are included under `audit/` and `verification/`.
+
+## Installation and update
 
 > [!WARNING]
-> **Осторожно: сначала сделай полную резервную копию Home Assistant и сохрани
-> прежнюю сборку.** Первую проверку проводи под наблюдением с некритичной нагрузкой.
-> Установка бета-версии не гарантирует сохранность оборудования и данных.
+> **Use caution: create a full Home Assistant backup and keep your previous build.**
+> Supervise initial testing and use noncritical loads. Installing this beta does
+> not guarantee preservation of equipment, settings, or data.
 
-1. Скачай `suris_ef_ble_0.8.0b4.zip` из раздела **Releases**, выбрав
-   именно выпуск с отметкой **Pre-release**. Стабильного выпуска этой версии нет.
-2. Распакуй архив на компьютере. Найди `custom_components/suris_ef_ble_xboost`.
-3. В Home Assistant полностью замени папку `/config/custom_components/suris_ef_ble_xboost`
-   этой папкой. Не объединяй старый и новый `_vendor`. Перезапусти HA.
-4. Открой «Настройки → Устройства и службы → Добавить интеграцию» и выбери
-   **Suris EcoFlow BLE (Unofficial Beta)**. Выбери обнаруженную DELTA 2 Max.
-5. Выбери «Войти в EcoFlow» либо «У меня есть User ID» и дождись проверки BLE.
-   Используй свою учётную запись, к которой привязана станция.
-6. Сначала проверь показания, затем каждую команду непосредственно на станции.
-   Подключай автоматизации только после проверки.
+1. Download `suris_ef_ble_0.8.0b4.zip` from [Releases](https://github.com/Suris2009/suris-ef-ble/releases).
+   Select the release marked **Pre-release**. There is no stable release of this version.
+2. Extract the ZIP on your computer and locate `custom_components/suris_ef_ble_xboost`.
+3. Replace `/config/custom_components/suris_ef_ble_xboost` in Home Assistant with
+   that complete folder. Do not merge old and new `_vendor` files. Restart Home Assistant.
+4. Open **Settings → Devices & services → Add integration** and select
+   **Suris EcoFlow BLE (Unofficial Beta)**. Select your discovered DELTA 2 Max.
+5. Choose the EcoFlow sign-in option or manual User ID entry, using your own
+   account associated with the station, and wait for BLE authentication.
+6. Check readings, then verify each command directly on the station before
+   connecting automations.
 
-При обновлении существующей Suris не удаляй её запись интеграции, если хочешь
-сохранить entity_id. Для старых форматов предусмотрены миграция и повторная
-авторизация. Старую `ef_ble` **отключи для этой же станции**; удалять её для
-других устройств не требуется. Закрой приложение EcoFlow, если оно занимает BLE:
-станция допускает только одно такое соединение одновременно.
+When updating an existing Suris installation, keep its integration entry to
+preserve entity IDs. Older entry formats have migration and reauthentication
+support. Disable the old `ef_ble` entry **for the same station**; entries for
+other devices can remain. Close the EcoFlow app if it occupies the BLE connection:
+the station supports only one such connection at a time.
 
-В ZIP исходники, лицензии и материалы проверок. Для HA нужна только папка
-компонента целиком, включая её LICENSE/NOTICE. `audit/`, `verification/` и
-корневые документы копировать в `/config` не нужно.
+The ZIP includes source code, licenses, and verification material. Home Assistant
+needs only the complete component folder, including its LICENSE and NOTICE.
+The root documents, `audit/`, and `verification/` do not need to be copied into `/config`.
 
-## Осторожность при использовании
+## Use with caution
 
 > [!CAUTION]
-> Команды могут включать/отключать выходы и менять параметры зарядки.
-> **Проверяй фактическое состояние станции. Не оставляй первые тесты без присмотра.**
-> Ошибочные или запоздавшие показания не должны быть единственным основанием
-> для управления критичным оборудованием. Интеграция не заменяет аппаратные защиты.
+> Commands can turn outputs on or off and change charging settings.
+> **Verify the actual state of the station. Supervise initial tests.**
+> Incorrect or delayed readings must not be the sole basis for controlling
+> critical equipment. This integration does not replace hardware protections.
 
-После обновления HA, Bluetooth или прошивки EcoFlow заново проверь связь,
-показания и команды. При неожиданном поведении прекрати тестирование и отключи
-интеграцию через «Настройки → Устройства и службы». Для отката восстанови прежнюю
-папку компонента и, при необходимости, резервную копию HA.
+After changes to Home Assistant, Bluetooth, or EcoFlow firmware, recheck the
+connection, readings, and commands. If behavior is unexpected, stop testing and
+disable the integration in **Settings → Devices & services**. To roll back,
+restore your previous component folder and, if needed, your Home Assistant backup.
 
-## Учётные данные
+## Credentials and use by other owners
 
-**Подходит другим владельцам DELTA 2 Max:** личных паролей, User ID или
-идентификаторов станции автора в коде нет. Каждый пользователь настраивает
-свою станцию и свою учётную запись. Ограничение касается модели и слота батареи,
-а не личности владельца.
+**Other DELTA 2 Max owners can use this integration.** No personal passwords,
+User ID, or station identifiers belonging to the author were found in the code.
+Each user selects their own station and provides their own account details.
+The compatibility restriction concerns the device model and battery slot.
 
-Вход по email/паролю обращается к EcoFlow API по HTTPS, чтобы получить User ID.
-Интеграция не сохраняет email и пароль в своей записи настроек. User ID, серийный
-номер и Bluetooth-адрес сохраняются локально в конфигурации Home Assistant и
-могут попасть в его резервные копии. Ручной ввод User ID не требует облачного
-входа через Suris. Управление после авторизации происходит локально через BLE.
-Не публикуй пароли, User ID, серийные номера, адреса и необработанные отладочные логи.
+Email/password sign-in contacts the EcoFlow API over HTTPS to obtain a User ID.
+The integration does not retain the email and password in its configuration entry.
+The User ID, serial number, and Bluetooth address are stored locally in Home
+Assistant configuration and may appear in backups. Manual User ID entry avoids
+cloud sign-in through Suris. Device control after authentication uses local BLE.
+Do not publish passwords, User IDs, serial numbers, addresses, or unredacted debug logs.
 
-## Лицензия и происхождение
+## License and attribution
 
-Код и документация распространяются под **Apache-2.0**. Сохранены лицензия
-upstream и исходные уведомления; изменённые файлы помечены. Названия EcoFlow
-и DELTA используются для обозначения совместимости; права на товарные знаки
-не передаются. Проверка открытой лицензии не является гарантией отсутствия
-любых интеллектуальных, патентных или договорных претензий.
+Code and documentation are distributed under **Apache-2.0**. The upstream
+license and original notices are preserved, and modified files are identified.
+EcoFlow and DELTA names identify compatibility; no trademark rights are granted.
+The license review is not a guarantee against intellectual-property, patent,
+or contractual claims.
 
 - [LICENSE](LICENSE), [NOTICE](NOTICE), [UPSTREAM_NOTICE.md](UPSTREAM_NOTICE.md).
-- [Сторонние компоненты и марки](THIRD_PARTY_NOTICES.md).
-- [Предупреждения и отказ от ответственности](DISCLAIMER.md).
+- [Third-party components and trademarks](THIRD_PARTY_NOTICES.md).
+- [Warnings and disclaimer of warranties and liability](DISCLAIMER.md).
 
-## English
-
-**Unofficial, unstable beta; use with caution and at your own risk.** This is
-an independent DELTA 2 Max + Extra Battery 1 integration based on Apache-2.0
-EcoFlow BLE code. It is not an official EcoFlow or ha-ef-ble release. No hardware
-or live-cloud verification was performed for this build. Back up Home Assistant,
-supervise tests, check every command at the station, and avoid critical loads.
-Car Input 2 remains experimental. No warranties are given; authors and
-contributors accept no liability to the maximum extent permitted by law.
-Read [DISCLAIMER.md](DISCLAIMER.md) before use. Thank you to rabits, GnoX,
-and all EcoFlow BLE contributors.
+**Use with caution and at your own risk. No warranties; no liability to the
+maximum extent permitted by law. Mandatory legal rights remain unaffected.**
