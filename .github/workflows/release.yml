@@ -1,0 +1,32 @@
+name: Publish unofficial beta prerelease
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-beta-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Build source archive with license notices
+        run: python3 scripts/build_release.py
+      - name: Publish as prerelease only
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=$(python3 -c 'import json; print(json.load(open("custom_components/suris_ef_ble_xboost/manifest.json"))["version"])')
+          gh release create "v${VERSION}" \
+            "dist/suris_ef_ble_${VERSION}.zip" \
+            "dist/suris_ef_ble_${VERSION}.zip.sha256" \
+            --target "$GITHUB_SHA" \
+            --title "Suris EcoFlow BLE ${VERSION} — Fully standalone / 100% local BLE — UNOFFICIAL / UNSTABLE BETA" \
+            --notes-file RELEASE_NOTES.md \
+            --prerelease \
+            --latest=false
