@@ -1,0 +1,262 @@
+--- a/custom_components/ef_ble/eflib/__init__.py
++++ b/custom_components/suris_ef_ble_xboost/_vendor/eflib/__init__.py
+@@ -1,89 +1,9 @@
+-"""Library for EcoFlow BLE protocol"""
++# SPDX-License-Identifier: Apache-2.0
++# Derived from rabits/ha-ef-ble v1.1.1; upstream authorship is retained.
++# Modified by Suris contributors; notice updated 2026-09-06.
++# Changes: Restrict imports to DELTA 2 Max; retain device-first import order.
++# Release 0.8.0b4 adds this notice only; executable code is unchanged.
++"""EcoFlow BLE 1.1.1. Suris modification: import only the D2M backend."""
+ 
+-from typing import TYPE_CHECKING, TypeGuard
+-
+-from bleak.backends.device import BLEDevice
+-from bleak.backends.scanner import AdvertisementData
+-
+-from . import devices
+-from .devicebase import DeviceBase
+-from .devices import powerstream, stream_microinverter, unsupported
+-from .entity import controls as controls
+-from .entity import units as units
+-from .props.updatable_props import UpdatableProps
+-
+-if TYPE_CHECKING:
+-    from .props import ProtobufProps, RawDataProps
+-
+-
+-def sn_from_advertisement(adv_data: AdvertisementData):
+-    if not (
+-        hasattr(adv_data, "manufacturer_data")
+-        and DeviceBase.MANUFACTURER_KEY in adv_data.manufacturer_data
+-    ):
+-        return None
+-
+-    man_data = adv_data.manufacturer_data[DeviceBase.MANUFACTURER_KEY]
+-    return man_data[1:17].strip(b"\x00")
+-
+-
+-def is_unsupported(
+-    device: DeviceBase | None,
+-) -> TypeGuard[unsupported.UnsupportedDevice]:
+-    return isinstance(device, unsupported.UnsupportedDevice)
+-
+-
+-def is_solar_only(device: DeviceBase | None):
+-    return isinstance(device, (stream_microinverter.Device, powerstream.Device))
+-
+-
+-def NewDevice(ble_dev: BLEDevice, adv_data: AdvertisementData) -> DeviceBase | None:
+-    """Return Device if ble dev fits the requirements otherwise None"""
+-    if (sn := sn_from_advertisement(adv_data)) is None:
+-        return None
+-
+-    # Check if known devices fits the found serial number
+-    for item in devices.devices:
+-        if (device := getattr(item, "Device", None)) is not None and device.check(sn):
+-            return item.Device(ble_dev, adv_data, sn.decode("ASCII"))
+-
+-    return unsupported.UnsupportedDevice(ble_dev, adv_data, sn.decode("ASCII"))
+-
+-
+-def get_protobuf_device(device: DeviceBase | None) -> "ProtobufProps | None":
+-    from .props import ProtobufProps  # noqa: PLC0415
+-
+-    return device if isinstance(device, ProtobufProps) else None
+-
+-
+-def get_fixed_length_coding_device(device: DeviceBase | None) -> "RawDataProps | None":
+-    from .props import RawDataProps  # noqa: PLC0415
+-
+-    return device if isinstance(device, RawDataProps) else None
+-
+-
+-def get_updatable_prop_device(device: DeviceBase):
+-    if not isinstance(device, UpdatableProps):
+-        raise TypeError("Device has to be subclass of UpdatableProps")
+-
+-    return device
+-
+-
+-def get_controls[E: controls.ControlType](
+-    device: DeviceBase, control_type: type[E]
+-) -> list[E]:
+-    return get_updatable_prop_device(device).get_controls(control_type)
+-
+-
+-__all__ = [
+-    "DeviceBase",
+-    "NewDevice",
+-    "controls",
+-    "get_controls",
+-    "get_fixed_length_coding_device",
+-    "get_protobuf_device",
+-    "get_updatable_prop_device",
+-    "is_solar_only",
+-    "is_unsupported",
+-    "units",
+-]
++# Preserve upstream's device-first import order (props has a DeviceBase back-reference).
++from .devices.delta2_max import Device as Device
+--- a/custom_components/ef_ble/eflib/connection.py
++++ b/custom_components/suris_ef_ble_xboost/_vendor/eflib/connection.py
+@@ -1,3 +1,8 @@
++# SPDX-License-Identifier: Apache-2.0
++# Derived from rabits/ha-ef-ble v1.1.1; upstream authorship is retained.
++# Modified by Suris contributors; notice updated 2026-09-06.
++# Changes: Await cancelled connection tasks and track unnamed timers during teardown.
++# Release 0.8.0b4 adds this notice only; executable code is unchanged.
+ import asyncio
+ import contextlib
+ import functools
+@@ -263,7 +268,7 @@
+         self._auth_header_dst = auth_header_dst
+ 
+         self._tasks: set[asyncio.Task] = set()
+-        self._call_later_handles: dict[str, asyncio.TimerHandle] = {}
++        self._call_later_handles: dict[object, asyncio.TimerHandle] = {}
+         self._auth_task: asyncio.Task | None = None
+         self._inbox: asyncio.Queue[bytes | None] | None = None
+         self._data_pump: asyncio.Task | None = None
+@@ -577,7 +582,9 @@
+ 
+         self._reconnect_attempt = 0
+         await self._stop_data_pump()
+-        self._cancel_tasks()
++        # Suris modification: complete cancellation before releasing the BLE session.
++        # Exclude the calling task if a shutdown originates inside backend work.
++        await self._cancel_tasks()
+ 
+         if self._client is not None and self._client.is_connected:
+             self._set_state(ConnectionState.DISCONNECTING, reason=reason)
+@@ -1501,10 +1508,13 @@
+     ) -> None:
+         self._set_state(state, exc)
+ 
+-    def _cancel_tasks(self):
+-        for task in self._tasks:
++    async def _cancel_tasks(self):
++        tasks = tuple(task for task in self._tasks if task is not asyncio.current_task())
++        for task in tasks:
+             task.cancel()
+-        self._tasks.clear()
++        if tasks:
++            await asyncio.gather(*tasks, return_exceptions=True)
++        self._tasks.difference_update(tasks)
+ 
+         for handle in self._call_later_handles.values():
+             handle.cancel()
+@@ -1553,9 +1563,9 @@
+                 return
+             callback()
+ 
++        # Suris modification: unnamed timers also belong to this connection.
+         if key is None:
+-            asyncio.get_running_loop().call_later(delay, _call_if_connected)
+-            return
++            key = object()
+ 
+         if (h := self._call_later_handles.get(key)) is not None:
+             h.cancel()
+--- a/custom_components/ef_ble/eflib/devicebase.py
++++ b/custom_components/suris_ef_ble_xboost/_vendor/eflib/devicebase.py
+@@ -1,3 +1,8 @@
++# SPDX-License-Identifier: Apache-2.0
++# Derived from rabits/ha-ef-ble v1.1.1; upstream authorship is retained.
++# Modified by Suris contributors; notice updated 2026-09-06.
++# Changes: Check advertisement length before accessing byte 22.
++# Release 0.8.0b4 adds this notice only; executable code is unchanged.
+ import abc
+ import asyncio
+ import time
+@@ -581,6 +586,7 @@
+             status=manufacturer_data[17] if len(manufacturer_data) > 17 else 0,
+             product_type=manufacturer_data[18] if len(manufacturer_data) > 18 else 0,
+             capability_flags=(
+-                manufacturer_data[22] if len(manufacturer_data) > 19 else 0b0111000
++                # Suris modification: the accessed byte is 22, not 19.
++                manufacturer_data[22] if len(manufacturer_data) > 22 else 0b0111000
+             ),
+         )
+--- a/custom_components/ef_ble/eflib/devices/__init__.py
++++ b/custom_components/suris_ef_ble_xboost/_vendor/eflib/devices/__init__.py
+@@ -1,21 +1,6 @@
+-import importlib
+-from pathlib import Path
+-from types import ModuleType
+-from typing import TYPE_CHECKING, Protocol
+-
+-if TYPE_CHECKING:
+-    from ..devicebase import DeviceBase
+-
+-    class ModuleWithDevice(Protocol):
+-        Device: type[DeviceBase]
+-
+-
+-__all__ = [
+-    f.stem
+-    for f in Path(__file__).parent.glob("*.py")
+-    if f.is_file() and not f.stem.startswith("_")
+-]
+-
+-devices: list["ModuleWithDevice | ModuleType"] = [
+-    importlib.import_module(f".{device}", __name__) for device in __all__
+-]
++# SPDX-License-Identifier: Apache-2.0
++# Derived from rabits/ha-ef-ble v1.1.1; upstream authorship is retained.
++# Modified by Suris contributors; notice updated 2026-09-06.
++# Changes: Remove automatic imports of unrelated device models.
++# Release 0.8.0b4 adds this notice only; executable code is unchanged.
++"""Suris modification: no automatic imports of unrelated devices."""
+--- a/custom_components/ef_ble/eflib/devices/_delta2_base.py
++++ b/custom_components/suris_ef_ble_xboost/_vendor/eflib/devices/_delta2_base.py
+@@ -1,3 +1,8 @@
++# SPDX-License-Identifier: Apache-2.0
++# Derived from rabits/ha-ef-ble v1.1.1; upstream authorship is retained.
++# Modified by Suris contributors; notice updated 2026-09-06.
++# Changes: Restrict extra-battery kit metadata to slot 1.
++# Release 0.8.0b4 adds this notice only; executable code is unchanged.
+ from ..devicebase import DeviceBase
+ from ..entity import controls
+ from ..entity.base import dynamic
+@@ -231,7 +236,9 @@
+                 "level": Delta2Base.battery_2_battery_level,
+             },
+         ]
+-        for i, kit in enumerate(kit_data.kit_base_info):
++        # Suris modification: this integration exposes exactly Extra Battery 1.
++        # Also avoid indexing past the fixed map on a larger kit-info message.
++        for i, kit in enumerate(kit_data.kit_base_info[:1]):
+             battery_dict = battery_entity_map[i]
+             available = kit.avai_flag
+             self.set_value(battery_dict["enabled"], bool(available))
+--- a/custom_components/ef_ble/eflib/listeners.py
++++ b/custom_components/suris_ef_ble_xboost/_vendor/eflib/listeners.py
+@@ -1,3 +1,8 @@
++# SPDX-License-Identifier: Apache-2.0
++# Derived from rabits/ha-ef-ble v1.1.1; upstream authorship is retained.
++# Modified by Suris contributors; notice updated 2026-09-06.
++# Changes: Make unsubscribe idempotent and iterate over a listener snapshot.
++# Release 0.8.0b4 adds this notice only; executable code is unchanged.
+ from collections.abc import Callable
+ from dataclasses import dataclass, field
+ from inspect import get_annotations
+@@ -51,7 +56,9 @@
+         self.append(object)
+ 
+         def _unlisten():
+-            self.remove(object)
++            # Suris modification: teardown can be called more than once by HA.
++            if object in self:
++                self.remove(object)
+ 
+         return _unlisten
+ 
+@@ -63,5 +70,6 @@
+     else:
+ 
+         def __call__(self, *args, **kwargs):
+-            for listener in self:
++            # Suris modification: callbacks may subscribe/unsubscribe while notifying.
++            for listener in tuple(self):
+                 listener(*args, **kwargs)

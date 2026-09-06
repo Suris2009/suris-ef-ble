@@ -1,0 +1,15 @@
+{
+  "project": "https://github.com/rabits/ha-ef-ble",
+  "tag": "v1.1.1",
+  "commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+  "verified_on": "2026-09-06",
+  "source_api": "https://api.github.com/repos/rabits/ha-ef-ble/zipball/v1.1.1",
+  "upstream_zip_sha256": "2a263a9fb37a4b5c00cd3acd79ce23c17ad1ba7de2db89873cbe2be06aad2177",
+  "submitted_archive_sha256": "34fe01252f949aac8ebde6a563531427adb7f4974053c52dc8dedad7e63ef7bf",
+  "license_sha256": "b8a5ad153a7153e713c20537d64adfb737b31c026553678fddd917d295d0a6ac",
+  "standalone_upstream_notice_found": false,
+  "all_recorded_upstream_file_hashes_confirmed": true,
+  "bundled_python_files": 40,
+  "unchanged_files": 34,
+  "modified_files": 6
+}

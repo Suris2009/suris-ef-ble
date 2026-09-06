@@ -1,0 +1,282 @@
+[
+  {
+    "path": "__init__.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "294043178d78ea8d5fc9a0c36f61b300395e99a92830a925b3245ffa93395c71",
+    "suris_sha256": "893e96254f0b0dc32a0e3637db9c63ffa99cb0b5c393b2cfcf9cfea93985b3bc",
+    "modified": true
+  },
+  {
+    "path": "connection.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "845f198b8fd997367024fea14b8e7cd45d56132e2f595c54586364233e7c697a",
+    "suris_sha256": "d9c6feebf44c7cc644a5ae30c54deba852570fcb715bd10e2d594f22ee5dd324",
+    "modified": true
+  },
+  {
+    "path": "crc.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "8cd767b474396d0d2641a0d0bcbf2a2c036df73d79c56dad77e4320508e73ebd",
+    "suris_sha256": "8cd767b474396d0d2641a0d0bcbf2a2c036df73d79c56dad77e4320508e73ebd",
+    "modified": false
+  },
+  {
+    "path": "devicebase.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "e454f4d4171e30f5bf5b8710dd2e7975ae2761686342f9fcfc3c8193535b170e",
+    "suris_sha256": "23d5115cdb8bb848ec8ca2755e472f1a208116d7dc289c4e79773a270e8b9483",
+    "modified": true
+  },
+  {
+    "path": "devices/__init__.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "9c6c862c672616834a9b17375ed26c2942d0070f8b47e6f43e0bd2781834a786",
+    "suris_sha256": "50d9cc073fe9c88737a0fa77a17ee77c90e2a95477973020fa1a95ff4d57ceff",
+    "modified": true
+  },
+  {
+    "path": "devices/_delta2_base.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "b707351d9c24728ac6b1ad92986dd1783fe932f940ed5c0dbd9a99d7d9bdd8e6",
+    "suris_sha256": "57e8c9fa0361d92b3a01d43500dada8777bcb7eb083043d7f1c1d2a8893625c3",
+    "modified": true
+  },
+  {
+    "path": "devices/delta2_max.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "070cf93e24be17618f10448aa247c1ab616d4bfed871206fbc196a44780f9b76",
+    "suris_sha256": "070cf93e24be17618f10448aa247c1ab616d4bfed871206fbc196a44780f9b76",
+    "modified": false
+  },
+  {
+    "path": "encpacket.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "b19a80f491697d7554cae37743dd518406dff0fed10e0b046a0460b264a8e612",
+    "suris_sha256": "b19a80f491697d7554cae37743dd518406dff0fed10e0b046a0460b264a8e612",
+    "modified": false
+  },
+  {
+    "path": "encryption.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "63d8c236d15f3eeaa4d7ecb1be675bd2a22351c51d47cd1fd0b195a94489d502",
+    "suris_sha256": "63d8c236d15f3eeaa4d7ecb1be675bd2a22351c51d47cd1fd0b195a94489d502",
+    "modified": false
+  },
+  {
+    "path": "entity/__init__.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "a8ddc009c7763c12a48b457d88e64a09210b4ac08153293b25c392cfd6af18b3",
+    "suris_sha256": "a8ddc009c7763c12a48b457d88e64a09210b4ac08153293b25c392cfd6af18b3",
+    "modified": false
+  },
+  {
+    "path": "entity/base.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "d889abce215ec9ccd15e4c3f2a16155f859532153c07d008a75f131dd10ab2a6",
+    "suris_sha256": "d889abce215ec9ccd15e4c3f2a16155f859532153c07d008a75f131dd10ab2a6",
+    "modified": false
+  },
+  {
+    "path": "entity/controls.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "0307847d452a3ab4b04fc20b5ab95c61aec82d45699a01d66af4c9f49ecd3b53",
+    "suris_sha256": "0307847d452a3ab4b04fc20b5ab95c61aec82d45699a01d66af4c9f49ecd3b53",
+    "modified": false
+  },
+  {
+    "path": "entity/units.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "41647906a3841ee77eabb4eb9082d62c2c0b9473708287ca73401d0edc222223",
+    "suris_sha256": "41647906a3841ee77eabb4eb9082d62c2c0b9473708287ca73401d0edc222223",
+    "modified": false
+  },
+  {
+    "path": "exceptions.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "dc227924c0fe4ed6708c101e8c2055d6539d84d013706833683d1a9c5f53c98c",
+    "suris_sha256": "dc227924c0fe4ed6708c101e8c2055d6539d84d013706833683d1a9c5f53c98c",
+    "modified": false
+  },
+  {
+    "path": "frame_assembler.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "1b234ad78a6931ca92529b8167249892dbf0106f831713ff13721a9768d0ab13",
+    "suris_sha256": "1b234ad78a6931ca92529b8167249892dbf0106f831713ff13721a9768d0ab13",
+    "modified": false
+  },
+  {
+    "path": "keydata.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "a3539e9efccedc0ec0960858a9c1416813b732bc8656518345846b93e30c7b7d",
+    "suris_sha256": "a3539e9efccedc0ec0960858a9c1416813b732bc8656518345846b93e30c7b7d",
+    "modified": false
+  },
+  {
+    "path": "listeners.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "4458ab92053f3759c8a03be69465f1bd4ff325951318efc21e56dc3e892e8a25",
+    "suris_sha256": "730b493a4f8348bb5b003085097783312391dc832ea3db918dbccdf0cb7cb33b",
+    "modified": true
+  },
+  {
+    "path": "logging_util.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "ccf8a619de58de6bd8cdb9841b9945de54a59409cb06a0ad3050dbdc857e49b9",
+    "suris_sha256": "ccf8a619de58de6bd8cdb9841b9945de54a59409cb06a0ad3050dbdc857e49b9",
+    "modified": false
+  },
+  {
+    "path": "login.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "f4885feab103086756cd7b6fafd149308fcc2c6b6b35633654bf940c98f7190c",
+    "suris_sha256": "f4885feab103086756cd7b6fafd149308fcc2c6b6b35633654bf940c98f7190c",
+    "modified": false
+  },
+  {
+    "path": "model/__init__.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "b134dfb57946ae5e00d081ca8f25e82b24f755ff931f63353b61e28e2eabd512",
+    "suris_sha256": "b134dfb57946ae5e00d081ca8f25e82b24f755ff931f63353b61e28e2eabd512",
+    "modified": false
+  },
+  {
+    "path": "model/base.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "d6a279321699646e84991aebcf20d60bf6b828343835c3acbb4b8f28a7437b78",
+    "suris_sha256": "d6a279321699646e84991aebcf20d60bf6b828343835c3acbb4b8f28a7437b78",
+    "modified": false
+  },
+  {
+    "path": "model/direct_bms_heartbeat_pack.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "1a57c977450d1604f79b55d8ecfcb05377e4c25dd43be4aa556bae719ae496d3",
+    "suris_sha256": "1a57c977450d1604f79b55d8ecfcb05377e4c25dd43be4aa556bae719ae496d3",
+    "modified": false
+  },
+  {
+    "path": "model/direct_ems_heartbeat_pack.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "97a649adaec460ea96066a67e70dedfaf907b5a3d68fb5205d978f82f49cfefa",
+    "suris_sha256": "97a649adaec460ea96066a67e70dedfaf907b5a3d68fb5205d978f82f49cfefa",
+    "modified": false
+  },
+  {
+    "path": "model/direct_inv_heartbeat_pack.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "b440b8b3019faff7c2f0e0ad7a8ea0760132b500dffcb58e2ef9694a2d3abddd",
+    "suris_sha256": "b440b8b3019faff7c2f0e0ad7a8ea0760132b500dffcb58e2ef9694a2d3abddd",
+    "modified": false
+  },
+  {
+    "path": "model/direct_mppt_heartbeat_pack.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "a53f4a99a48107a4ceaf995f874a41806ba9fe48b75ceae573a2cacd24d3e4fd",
+    "suris_sha256": "a53f4a99a48107a4ceaf995f874a41806ba9fe48b75ceae573a2cacd24d3e4fd",
+    "modified": false
+  },
+  {
+    "path": "model/direct_pd_heartbeat_pack.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "2956b7b1b2d206c4d89eba31c0e9b91b6a16a9efd1689ca5ca47bc7769f6bf72",
+    "suris_sha256": "2956b7b1b2d206c4d89eba31c0e9b91b6a16a9efd1689ca5ca47bc7769f6bf72",
+    "modified": false
+  },
+  {
+    "path": "model/kit_info.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "27267dc5b62be4b231639ef160b7671081e7d95a93f854c32f5799257cb535a3",
+    "suris_sha256": "27267dc5b62be4b231639ef160b7671081e7d95a93f854c32f5799257cb535a3",
+    "modified": false
+  },
+  {
+    "path": "model/mppt_heart.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "a9f541418636b9eb399de1e174b7536ea79b926432660fe147cfc4f69280b724",
+    "suris_sha256": "a9f541418636b9eb399de1e174b7536ea79b926432660fe147cfc4f69280b724",
+    "modified": false
+  },
+  {
+    "path": "model/pd_heart.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "e8ffaa4f15b7b767b930c9069136d52e7e7402de9477554d1cd039534e79938e",
+    "suris_sha256": "e8ffaa4f15b7b767b930c9069136d52e7e7402de9477554d1cd039534e79938e",
+    "modified": false
+  },
+  {
+    "path": "packet.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "348dc5d145e484a10197efc16c174393520ccaa3908015148b6d885b16b7da21",
+    "suris_sha256": "348dc5d145e484a10197efc16c174393520ccaa3908015148b6d885b16b7da21",
+    "modified": false
+  },
+  {
+    "path": "props/__init__.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "13961d416a82d4470a817a4ec5fb8fd0ef54f7ece9a78d07844e02ac6c2c1e3a",
+    "suris_sha256": "13961d416a82d4470a817a4ec5fb8fd0ef54f7ece9a78d07844e02ac6c2c1e3a",
+    "modified": false
+  },
+  {
+    "path": "props/enums.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "c999bdeb68e57f2d977f8cfe24cb08f6741972edbbb5c4fa7b2abd92cf3b75a4",
+    "suris_sha256": "c999bdeb68e57f2d977f8cfe24cb08f6741972edbbb5c4fa7b2abd92cf3b75a4",
+    "modified": false
+  },
+  {
+    "path": "props/protobuf_field.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "ef4e522d2b6301766f913c33d692e5859a538814b907c365a6f5327cf6386f1b",
+    "suris_sha256": "ef4e522d2b6301766f913c33d692e5859a538814b907c365a6f5327cf6386f1b",
+    "modified": false
+  },
+  {
+    "path": "props/protobuf_props.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "79c502c1eb2ae6205127a2b3585f56c8822969c2022834aa05a73a95af5f0816",
+    "suris_sha256": "79c502c1eb2ae6205127a2b3585f56c8822969c2022834aa05a73a95af5f0816",
+    "modified": false
+  },
+  {
+    "path": "props/raw_data_field.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "3553c4a326a9327540afe2ddbf1496c226cf987721f15e6e4e545f22b0e11e46",
+    "suris_sha256": "3553c4a326a9327540afe2ddbf1496c226cf987721f15e6e4e545f22b0e11e46",
+    "modified": false
+  },
+  {
+    "path": "props/raw_data_props.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "b90a45ef063633e22d8870d2ec8a9836c3c72b347ed546b9bb65db2337d6db13",
+    "suris_sha256": "b90a45ef063633e22d8870d2ec8a9836c3c72b347ed546b9bb65db2337d6db13",
+    "modified": false
+  },
+  {
+    "path": "props/repeated_protobuf_field.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "54125595537ed1e4364c09d803aca8c6ef65a855b14460110a16ed3244f15877",
+    "suris_sha256": "54125595537ed1e4364c09d803aca8c6ef65a855b14460110a16ed3244f15877",
+    "modified": false
+  },
+  {
+    "path": "props/transforms.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "28543f331a28494d9b2823a9e89a05f226d895b466146ccaf2908c83f4d49822",
+    "suris_sha256": "28543f331a28494d9b2823a9e89a05f226d895b466146ccaf2908c83f4d49822",
+    "modified": false
+  },
+  {
+    "path": "props/updatable_props.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "8c0cbbef91b18c97c01c4a6af8d5ef9788e10660a57603ee45ad83f607df9d5d",
+    "suris_sha256": "8c0cbbef91b18c97c01c4a6af8d5ef9788e10660a57603ee45ad83f607df9d5d",
+    "modified": false
+  },
+  {
+    "path": "props/utils.py",
+    "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
+    "upstream_sha256": "febb809e1a6a7f5e54b7d10f4f25171a5f6b9b4945e8952f3996bda953e48a69",
+    "suris_sha256": "febb809e1a6a7f5e54b7d10f4f25171a5f6b9b4945e8952f3996bda953e48a69",
+    "modified": false
+  }
+]

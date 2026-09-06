@@ -1,0 +1,54 @@
+{
+  "title": "Suris EcoFlow BLE — Unofficial Beta",
+  "config": {
+    "step": {
+      "user": {
+        "title": "DELTA 2 Max",
+        "description": "UNOFFICIAL, UNSTABLE BETA. Not an EcoFlow product or an official EcoFlow BLE release. Use with caution and at your own risk; back up Home Assistant before installation. Provided without warranties; authors and contributors accept no liability to the maximum extent permitted by applicable law.\n\nChoose a discovered station. If the list is empty, turn it on and enter its Bluetooth address.",
+        "data": {
+          "address": "Station / Bluetooth address"
+        }
+      },
+      "bluetooth_confirm": {
+        "title": "DELTA 2 Max discovered",
+        "description": "UNOFFICIAL, UNSTABLE BETA. Not an EcoFlow product or an official EcoFlow BLE release. Use with caution and at your own risk; back up Home Assistant before installation. Provided without warranties; authors and contributors accept no liability to the maximum extent permitted by applicable law.\n\nSerial number: {serial_number}\nBluetooth address: {address}\n\nContinue to choose EcoFlow login or manual User ID."
+      },
+      "auth": {
+        "title": "EcoFlow authentication",
+        "menu_options": {
+          "login": "Log in to EcoFlow",
+          "user_id": "I have a User ID"
+        }
+      },
+      "login": {
+        "title": "Log in to EcoFlow",
+        "description": "Use the EcoFlow account bound to this station. Suris obtains the User ID and verifies it over BLE. Email and password are not saved. Close the EcoFlow app and disable other BLE integrations for this station.\n\nCAUTION: this beta can change power outputs and charging settings. Verify every command at the station. Do not rely on it for critical loads or unattended testing.",
+        "data": {
+          "email": "EcoFlow email",
+          "password": "EcoFlow password"
+        }
+      },
+      "user_id": {
+        "title": "I have a User ID",
+        "description": "Enter the numeric EcoFlow User ID. Setup completes only after successful BLE authentication. Close the EcoFlow app and disable other BLE connections.\n\nCAUTION: this beta can change power outputs and charging settings. Verify every command at the station. Do not rely on it for critical loads or unattended testing.",
+        "data": {
+          "user_id": "EcoFlow User ID"
+        }
+      }
+    },
+    "error": {
+      "device_not_found": "DELTA 2 Max is not visible via Bluetooth.",
+      "invalid_user_id": "Enter the numeric EcoFlow User ID.",
+      "login_failed": "EcoFlow login failed. Check email, password and internet connectivity.",
+      "invalid_auth": "The station rejected this User ID. Check the account bound to it.",
+      "cannot_connect": "BLE verification failed. Turn on the station, close the EcoFlow app and disable other BLE connections."
+    },
+    "abort": {
+      "already_configured": "This DELTA 2 Max is already configured in Suris.",
+      "not_delta_2_max": "This device is not a DELTA 2 Max.",
+      "wrong_device": "Select the previously configured station.",
+      "reauth_successful": "Suris authentication updated.",
+      "already_in_progress": "Setup is already in progress."
+    }
+  }
+}

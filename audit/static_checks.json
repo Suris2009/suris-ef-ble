@@ -1,0 +1,38 @@
+{
+  "python": "3.14.6",
+  "homeassistant": "2026.9.1",
+  "compiled_python_files": 52,
+  "vendored_python_files": 40,
+  "vendored_byte_identical_files": 34,
+  "vendored_modified_files": {
+    "__init__.py": "D2M-only imports; retain upstream device-first import order.",
+    "devices/__init__.py": "Disable automatic imports of unrelated device models.",
+    "connection.py": "Await cancelled connection tasks and track unnamed timers during teardown.",
+    "devicebase.py": "Require at least 23 advertisement bytes before accessing byte 22.",
+    "devices/_delta2_base.py": "Limit extra-battery kit metadata to the first slot.",
+    "listeners.py": "Idempotent unsubscribe and snapshot iteration during notification."
+  },
+  "device_class_methods_AST_identical": 74,
+  "device_class_method_changes": [
+    "devicebase.py:_ScanRecordV2.from_manufacturer_data",
+    "devices/_delta2_base.py:Delta2Base._update_extra_batteries"
+  ],
+  "external_ef_ble_imports": [],
+  "main": {
+    "sensor": 37,
+    "switch": 5,
+    "number": 4,
+    "select": 2,
+    "total": 48
+  },
+  "extra_battery_1": {
+    "sensor": 29,
+    "total": 29
+  },
+  "extra_battery_2": 0,
+  "upstream_main_sensor_coverage": "29/29",
+  "upstream_battery_1_sensor_coverage": "5/5",
+  "decoded_battery_1_field_coverage": "28/28",
+  "offline_tests_passed": 20,
+  "hardware_or_live_cloud_tested": false
+}

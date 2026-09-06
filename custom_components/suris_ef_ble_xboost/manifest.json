@@ -1,0 +1,37 @@
+{
+  "domain": "suris_ef_ble_xboost",
+  "name": "Suris EcoFlow BLE (Unofficial Beta)",
+  "version": "0.8.0b4",
+  "config_flow": true,
+  "dependencies": [
+    "bluetooth"
+  ],
+  "integration_type": "device",
+  "iot_class": "local_push",
+  "bluetooth": [
+    {
+      "local_name": "EF-R35*",
+      "manufacturer_id": 46517,
+      "manufacturer_data_start": [
+        19,
+        82,
+        51,
+        53
+      ],
+      "connectable": true
+    }
+  ],
+  "codeowners": [
+    "@Suris2009"
+  ],
+  "requirements": [
+    "ecdsa~=0.19",
+    "PyCryptodome~=3.23",
+    "protobuf~=6.30"
+  ],
+  "documentation": "https://github.com/Suris2009/suris-ef-ble",
+  "loggers": [
+    "custom_components.suris_ef_ble_xboost"
+  ],
+  "issue_tracker": "https://github.com/Suris2009/suris-ef-ble/issues"
+}

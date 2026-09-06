@@ -1,0 +1,29 @@
+{
+  "application_python_files": 52,
+  "executable_ast_changes_except_version": [],
+  "brand_files_byte_identical": true,
+  "manifest_fields_changed": [
+    "codeowners",
+    "documentation",
+    "issue_tracker",
+    "name",
+    "version"
+  ],
+  "version": "0.8.0b4",
+  "prerelease": true,
+  "hardware_tested": false,
+  "live_cloud_tested": false,
+  "json_files_valid": 11,
+  "en_translation_matches_strings": true,
+  "translation_schema_changes": [],
+  "translation_placeholder_errors": [],
+  "offline_test_summary": "20 passed, 5 warnings in 1.61s",
+  "test_environment": {
+    "python": "3.14.6",
+    "homeassistant": "2026.9.1"
+  },
+  "personal_credentials_found": false,
+  "synthetic_credentials_only_in_tests": true,
+  "license_matches_upstream": true,
+  "license_copied_inside_component": true
+}

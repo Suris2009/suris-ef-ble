@@ -1,0 +1,35 @@
+Suris EcoFlow BLE 0.8.0b4 — UNOFFICIAL / UNSTABLE BETA
+
+This distribution includes code from EcoFlow BLE (ha-ef-ble),
+created and maintained by rabits and the ha-ef-ble contributors.
+Project: https://github.com/rabits/ha-ef-ble
+Version: v1.1.1
+Commit: ef02d81a2720de256548a5d515af814cc3244ee9
+License: Apache License, Version 2.0 (see LICENSE).
+
+Thank you to rabits, GnoX, and all EcoFlow BLE contributors for the
+Bluetooth protocol implementation, device support, and maintenance.
+The v1.1.1 release specifically credits GnoX for connection/authentication work:
+https://github.com/rabits/ha-ef-ble/releases/tag/v1.1.1
+
+Suris-specific additions and modifications: Suris2009 and Suris contributors,
+2026. Suris does not claim sole authorship of the inherited protocol library.
+Suris additions and adaptations are distributed under Apache-2.0 as well.
+Modified vendored files carry notices. See UPSTREAM_NOTICE.md and
+THIRD_PARTY_NOTICES.md for provenance, changes, and dependency information.
+
+The upstream LICENSE is retained verbatim, including its existing
+"Copyright 2013-2017 Docker, Inc." notice. That inherited notice is not
+an attribution of the Suris additions to Docker or a claim of endorsement.
+No standalone upstream NOTICE file exists in the audited v1.1.1 source tree.
+This NOTICE was added by Suris and does not change the Apache-2.0 terms.
+
+This project is independently maintained. It is not an official release of
+EcoFlow or of rabits/ha-ef-ble and is not endorsed by either project/company.
+EcoFlow, DELTA, Bluetooth, and other names/marks belong to their respective
+owners. Names are used to identify compatibility and acknowledge origin.
+No trademark rights or manufacturer approval are granted by this release.
+
+UNSTABLE BETA: use cautiously and at your own risk. No warranties are given.
+To the maximum extent permitted by applicable law, the authors and
+contributors accept no liability. See DISCLAIMER.md and LICENSE.

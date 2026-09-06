@@ -1,0 +1,200 @@
+{
+  "controls": [
+    {
+      "method": "enable_usb_ports",
+      "definition": "controls.switch(usb_ports)",
+      "key": "usb_ports"
+    },
+    {
+      "method": "enable_dc_12v_port",
+      "definition": "controls.switch(dc_12v_port)",
+      "key": "dc_12v_port"
+    },
+    {
+      "method": "enable_ac_ports",
+      "definition": "controls.outlet(ac_ports)",
+      "key": "ac_ports"
+    },
+    {
+      "method": "set_battery_charge_limit_max",
+      "definition": "controls.battery(battery_charge_limit_max, min=dynamic(battery_charge_limit_min))",
+      "key": "battery_charge_limit_max"
+    },
+    {
+      "method": "set_battery_charge_limit_min",
+      "definition": "controls.battery(battery_charge_limit_min, max=dynamic(battery_charge_limit_max))",
+      "key": "battery_charge_limit_min"
+    },
+    {
+      "method": "enable_energy_backup",
+      "definition": "controls.switch(energy_backup)",
+      "key": "energy_backup"
+    },
+    {
+      "method": "set_energy_backup_battery_level",
+      "definition": "controls.battery(energy_backup_battery_level, min=dynamic(Delta2Base.battery_charge_limit_min), max=dynamic(Delta2Base.battery_charge_limit_max), availability=energy_backup)",
+      "key": "energy_backup_battery_level"
+    },
+    {
+      "method": "set_ac_charging_speed",
+      "definition": "controls.power(ac_charging_speed, min=1, max=dynamic(max_ac_charging_power))",
+      "key": "ac_charging_speed"
+    }
+  ],
+  "_SENSORS": [
+    {
+      "key": "battery_level",
+      "definition": "battery()"
+    },
+    {
+      "key": "battery_level_main",
+      "definition": "battery()"
+    },
+    {
+      "key": "input_power",
+      "definition": "power(precision=0)"
+    },
+    {
+      "key": "output_power",
+      "definition": "power(precision=0)"
+    },
+    {
+      "key": "remaining_time_charging",
+      "definition": "duration(enabled=False)"
+    },
+    {
+      "key": "remaining_time_discharging",
+      "definition": "duration(enabled=False)"
+    },
+    {
+      "key": "battery_voltage",
+      "definition": "port_voltage('Battery', state_attribute_fields=['max_cell_voltage', 'min_cell_voltage'])"
+    },
+    {
+      "key": "ac_input_power",
+      "definition": "power(precision=2)"
+    },
+    {
+      "key": "ac_input_voltage",
+      "definition": "voltage(precision=1, enabled=False)"
+    },
+    {
+      "key": "ac_input_current",
+      "definition": "current(precision=2, enabled=False)"
+    },
+    {
+      "key": "ac_output_power",
+      "definition": "power(precision=2)"
+    },
+    {
+      "key": "ac_output_voltage",
+      "definition": "voltage(precision=2, enabled=False)"
+    },
+    {
+      "key": "ac_output_current",
+      "definition": "current(precision=2, enabled=False)"
+    },
+    {
+      "key": "dc_output_power",
+      "definition": "power(precision=2)"
+    },
+    {
+      "key": "usba_output_power",
+      "definition": "power()"
+    },
+    {
+      "key": "usba2_output_power",
+      "definition": "power()"
+    },
+    {
+      "key": "usbc_output_power",
+      "definition": "power()"
+    },
+    {
+      "key": "usbc2_output_power",
+      "definition": "power()"
+    },
+    {
+      "key": "qc_usb1_output_power",
+      "definition": "power()"
+    },
+    {
+      "key": "qc_usb2_output_power",
+      "definition": "power()"
+    },
+    {
+      "key": "cell_temperature",
+      "definition": "temperature(enabled=False)"
+    },
+    {
+      "key": "max_cell_voltage",
+      "definition": "voltage(precision=3, enabled=False, entity_category=EntityCategory.DIAGNOSTIC)"
+    },
+    {
+      "key": "min_cell_voltage",
+      "definition": "voltage(precision=3, enabled=False, entity_category=EntityCategory.DIAGNOSTIC)"
+    },
+    {
+      "key": "dc12v_output_voltage",
+      "definition": "voltage(precision=2, enabled=False)"
+    },
+    {
+      "key": "dc12v_output_current",
+      "definition": "current(precision=2, enabled=False)"
+    },
+    {
+      "key": "dc_input_voltage",
+      "definition": "voltage(precision=2, enabled=False)"
+    },
+    {
+      "key": "dc_input_current",
+      "definition": "current(precision=2, enabled=False)"
+    },
+    {
+      "key": "xt60_1_input_power",
+      "definition": "power()"
+    },
+    {
+      "key": "xt60_2_input_power",
+      "definition": "power()"
+    }
+  ],
+  "_BATTERY_ADDON_SENSORS": [
+    {
+      "key": "battery_1_battery_level",
+      "definition": "battery(translation_key='battery_level')"
+    },
+    {
+      "key": "battery_1_cell_temperature",
+      "definition": "temperature(translation_key='cell_temperature')"
+    },
+    {
+      "key": "battery_1_voltage",
+      "definition": "port_voltage('Battery', state_attribute_fields=['battery_{n}_max_cell_voltage', 'battery_{n}_min_cell_voltage'])"
+    },
+    {
+      "key": "battery_1_max_cell_voltage",
+      "definition": "voltage(precision=3, enabled=False, entity_category=EntityCategory.DIAGNOSTIC, translation_key='max_cell_voltage')"
+    },
+    {
+      "key": "battery_1_min_cell_voltage",
+      "definition": "voltage(precision=3, enabled=False, entity_category=EntityCategory.DIAGNOSTIC, translation_key='min_cell_voltage')"
+    }
+  ],
+  "select_legacy_keys": [],
+  "number_legacy_keys": [
+    "energy_backup_battery_level",
+    "battery_charge_limit_min",
+    "battery_charge_limit_max",
+    "ac_charging_speed"
+  ],
+  "switch_legacy_keys": [
+    "dc_12v_port",
+    "ac_ports",
+    "energy_backup",
+    "usb_ports"
+  ],
+  "binary_sensor_legacy_keys": [],
+  "button_legacy_keys": [],
+  "climate_legacy_keys": []
+}
