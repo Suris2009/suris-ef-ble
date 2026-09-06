@@ -26,7 +26,7 @@ jobs:
             "dist/suris_ef_ble_${VERSION}.zip" \
             "dist/suris_ef_ble_${VERSION}.zip.sha256" \
             --target "$GITHUB_SHA" \
-            --title "Suris EcoFlow BLE ${VERSION} — Fully standalone / 100% local BLE — UNOFFICIAL / UNSTABLE BETA" \
+            --title "Suris EcoFlow BLE ${VERSION} — 100% local BLE / No internet required — UNOFFICIAL / UNSTABLE BETA" \
             --notes-file RELEASE_NOTES.md \
             --prerelease \
             --latest=false
