@@ -455,7 +455,7 @@ async def test_ha_loader_and_managed_initial_config_flow(hass):
     from homeassistant import loader
     loader.async_setup(hass)
     integration = await loader.async_get_integration(hass,DOMAIN)
-    assert integration.version == '0.8.0b4'
+    assert integration.version == '0.8.0b5'
     assert integration.dependencies == ['bluetooth']
     await integration.async_get_platform('config_flow')
     manager = hass.config_entries.flow

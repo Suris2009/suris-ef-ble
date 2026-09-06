@@ -1,4 +1,4 @@
-# Suris EcoFlow BLE 0.8.0b4 — 100% local BLE / No internet required · UNOFFICIAL / UNSTABLE BETA
+# Suris EcoFlow BLE 0.8.0b5 — 100% local BLE / No internet required · UNOFFICIAL / UNSTABLE BETA
 
 > [!CAUTION]
 > **UNOFFICIAL, UNSTABLE BETA. USE WITH CAUTION AND AT YOUR OWN RISK.**
@@ -21,7 +21,10 @@ This version prepares 0.8.0b3 for public distribution:
   and the six modified files carry prominent modification notices.
 - Adds caution notices to the README, installation instructions, and Home Assistant
   setup forms in English and Ukrainian. The integration is labeled Unofficial Beta.
-- Updates the version to 0.8.0b4 and supplies metadata for this repository.
+- Updates the version to 0.8.0b5 and supplies metadata for this repository.
+- Adds a dedicated `suris_ef_ble_xboost.zip` HACS asset with `manifest.json`
+  and all integration files directly at the archive root.
+- This is a packaging-only update; integration runtime behavior remains unchanged.
 - Preserves BLE, authentication and command logic, entity inventory and identifiers,
   and the turquoise appearance of 0.8.0b3.
 
@@ -44,7 +47,9 @@ and all creators and contributors of [EcoFlow BLE](https://github.com/rabits/ha-
 This project builds on their protocol implementation and device support.
 Acknowledgment does not imply their endorsement of Suris modifications.
 
-Download `suris_ef_ble_0.8.0b4.zip` below. Installation instructions are in the
+HACS uses the dedicated `suris_ef_ble_xboost.zip` asset. The full source,
+license, audit, and verification package is `suris_ef_ble_0.8.0b5.zip`.
+Installation instructions are in the
 [README](https://github.com/Suris2009/suris-ef-ble#installation-and-update).
 
 **Unofficial / unstable beta. Use with caution and at your own risk.**

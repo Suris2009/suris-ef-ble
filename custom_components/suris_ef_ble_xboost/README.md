@@ -1,4 +1,4 @@
-# Suris EcoFlow BLE 0.8.0b4 — 100% local BLE, no internet required
+# Suris EcoFlow BLE 0.8.0b5 — 100% local BLE, no internet required
 
 **100% local BLE operation. Works without internet or EcoFlow cloud.**
 
@@ -77,7 +77,25 @@ The recorded results are included under `audit/` and `verification/`.
 > Supervise initial testing and use noncritical loads. Installing this beta does
 > not guarantee preservation of equipment, settings, or data.
 
-1. Download `suris_ef_ble_0.8.0b4.zip` from [Releases](https://github.com/Suris2009/suris-ef-ble/releases).
+
+### HACS installation (recommended)
+
+Until this repository is accepted into the default HACS catalogue, add it
+as a custom repository:
+
+1. In HACS, open the top-right menu and select **Custom repositories**.
+2. Add `https://github.com/Suris2009/suris-ef-ble` with category **Integration**.
+3. Open the repository, select **Download**, expand **Need a different version?**,
+   and select `v0.8.0b5`, which is marked as a pre-release.
+4. Restart Home Assistant before configuring or testing the integration.
+
+HACS downloads the dedicated `suris_ef_ble_xboost.zip` asset. Integration
+files are stored directly at the archive root so HACS installs them into
+`/config/custom_components/suris_ef_ble_xboost` without nested directories.
+
+### Manual installation
+
+1. Download `suris_ef_ble_0.8.0b5.zip` from [Releases](https://github.com/Suris2009/suris-ef-ble/releases).
    Select the release marked **Pre-release**. There is no stable release of this version.
 2. Extract the ZIP on your computer and locate `custom_components/suris_ef_ble_xboost`.
 3. Replace `/config/custom_components/suris_ef_ble_xboost` in Home Assistant with
