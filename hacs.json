@@ -1,4 +1,6 @@
 {
-    "render_readme": true,
+  "name": "Suris EcoFlow BLE — 100% Local BLE (Unofficial Beta)",
+  "homeassistant": "2026.8.0",
+  "render_readme": true,
   "hide_default_branch": true
 }
