@@ -1,5 +1,7 @@
 # Third-party notices
 
+**Suris EcoFlow BLE: 100% local BLE operation. No internet or EcoFlow cloud connection is required during operation.**
+
 ## Bundled code
 
 The only third-party source subtree bundled in this distribution is

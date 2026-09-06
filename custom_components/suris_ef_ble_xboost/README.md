@@ -1,4 +1,6 @@
-# Suris EcoFlow BLE 0.8.0b4
+# Suris EcoFlow BLE 0.8.0b4 — 100% local BLE, no internet required
+
+**100% local BLE operation. Works without internet or EcoFlow cloud.**
 
 > [!CAUTION]
 > **UNOFFICIAL / UNSTABLE BETA — USE WITH CAUTION AND AT YOUR OWN RISK.**
@@ -8,9 +10,21 @@
 > and contributors accept no liability for its use or consequences.**
 > Read the [full disclaimer](DISCLAIMER.md) before installation.
 
-An independent Home Assistant integration for **EcoFlow DELTA 2 Max and one
-Extra Battery in slot 1**, using Bluetooth. A separate `ef_ble` installation is
-not required. The protocol implementation is based on EcoFlow BLE 1.1.1.
+## 100% local operation — no internet or EcoFlow cloud required
+
+Suris EcoFlow BLE provides **100% local Bluetooth monitoring and control** for
+**EcoFlow DELTA 2 Max and one Extra Battery in slot 1**:
+
+- **No internet or EcoFlow cloud connection is needed for operation** after device authentication.
+- **A direct BLE connection** carries readings and commands locally between Home Assistant and the station.
+- **Monitoring and control continue without internet access**, provided Home Assistant,
+  Bluetooth, and the station remain available.
+- **No separate `ef_ble` installation or running parent integration is required.**
+- **Cloud sign-in is optional during setup:** provide your User ID manually for BLE
+  authentication, or use email/password sign-in to obtain it from EcoFlow.
+
+The required protocol implementation is included and is based on EcoFlow BLE 1.1.1.
+Home Assistant and a working Bluetooth adapter or proxy are still required.
 Use this beta for supervised testing with noncritical loads.
 
 ## Thanks to the EcoFlow BLE creators
@@ -69,7 +83,7 @@ The recorded results are included under `audit/` and `verification/`.
 3. Replace `/config/custom_components/suris_ef_ble_xboost` in Home Assistant with
    that complete folder. Do not merge old and new `_vendor` files. Restart Home Assistant.
 4. Open **Settings → Devices & services → Add integration** and select
-   **Suris EcoFlow BLE (Unofficial Beta)**. Select your discovered DELTA 2 Max.
+   **Suris EcoFlow BLE — 100% Local BLE (Unofficial Beta)**. Select your discovered DELTA 2 Max.
 5. Choose the EcoFlow sign-in option or manual User ID entry, using your own
    account associated with the station, and wait for BLE authentication.
 6. Check readings, then verify each command directly on the station before

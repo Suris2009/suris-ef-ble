@@ -1,5 +1,7 @@
 # Upstream attribution and local modifications
 
+**Suris EcoFlow BLE: 100% local BLE operation. No internet or EcoFlow cloud connection is required during operation.**
+
 Suris EcoFlow BLE 0.8.0b4 is an **unofficial, unstable beta**. It bundles the
 DELTA 2 Max dependency closure of [EcoFlow BLE / ha-ef-ble](https://github.com/rabits/ha-ef-ble)
 by **rabits and the ha-ef-ble contributors**, under Apache-2.0.
