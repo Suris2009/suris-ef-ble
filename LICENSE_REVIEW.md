@@ -1,5 +1,7 @@
 # License review and publication preparation — 0.8.0b4
 
+**Suris EcoFlow BLE: 100% local BLE operation. No internet or EcoFlow cloud connection is required during operation.**
+
 Date: September 6, 2026. Reviewed the supplied `suris_ef_ble_0.8.0b3.zip` and
 the resulting 0.8.0b4. This is a source, attribution, and open-source license
 review, not a legal opinion covering every possible right.

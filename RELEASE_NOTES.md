@@ -1,10 +1,17 @@
-# Suris EcoFlow BLE 0.8.0b4 — UNOFFICIAL / UNSTABLE BETA
+# Suris EcoFlow BLE 0.8.0b4 — 100% local BLE / No internet required · UNOFFICIAL / UNSTABLE BETA
 
 > [!CAUTION]
 > **UNOFFICIAL, UNSTABLE BETA. USE WITH CAUTION AND AT YOUR OWN RISK.**
 > No warranties are provided. To the maximum extent permitted by law, authors
 > and contributors accept no liability for its use or consequences.
 > This is not an EcoFlow release or an official rabits/ha-ef-ble release.
+
+**Main benefit: 100% local BLE operation, without internet or EcoFlow cloud.**
+Station telemetry and commands use a direct local Bluetooth connection. Monitoring
+and control continue when internet access is unavailable, provided Home Assistant,
+Bluetooth, and the station remain available. Cloud sign-in during setup is optional:
+you can enter a User ID manually. No separate `ef_ble` installation or running
+parent integration is required.
 
 This version prepares 0.8.0b3 for public distribution:
 

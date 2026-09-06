@@ -1,5 +1,7 @@
 # Warnings and disclaimer
 
+**Suris EcoFlow BLE: 100% local BLE operation. No internet or EcoFlow cloud connection is required during operation.**
+
 **UNOFFICIAL, UNSTABLE BETA. USE WITH CAUTION AND AT YOUR OWN RISK.**
 
 Suris EcoFlow BLE is an independent experimental project. It is not developed,
