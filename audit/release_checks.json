@@ -11,9 +11,15 @@
   ],
   "version": "0.8.0b4",
   "prerelease": true,
-  "hardware_tested": false,
-  "live_cloud_tested": false,
-  "json_files_valid": 11,
+  "automated_review_used_real_hardware": false,
+  "automated_review_used_live_cloud": false,
+  "author_reported_hardware_test": {
+    "reported": true,
+    "model": "EcoFlow DELTA 2 Max",
+    "source": "Project owner's statement during publication preparation",
+    "coverage": "Not specified; no claim that every feature, firmware or configuration was tested"
+  },
+  "json_files_valid": 10,
   "en_translation_matches_strings": true,
   "translation_schema_changes": [],
   "translation_placeholder_errors": [],
@@ -25,5 +31,13 @@
   "personal_credentials_found": false,
   "synthetic_credentials_only_in_tests": true,
   "license_matches_upstream": true,
-  "license_copied_inside_component": true
+  "license_copied_inside_component": true,
+  "interface_languages": [
+    "en",
+    "uk"
+  ],
+  "documentation_language": "en",
+  "removed_translation_files": [
+    "custom_components/suris_ef_ble_xboost/translations/ru.json"
+  ]
 }
