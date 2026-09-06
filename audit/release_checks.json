@@ -39,5 +39,7 @@
   "documentation_language": "en",
   "removed_translation_files": [
     "custom_components/suris_ef_ble_xboost/translations/ru.json"
-  ]
+  ],
+  "cyrillic_text_only_in_uk_translation": true,
+  "standalone_local_operation_description": "100% local BLE telemetry and control; no internet or EcoFlow cloud needed during operation; optional cloud sign-in during setup; no separate ef_ble required"
 }
