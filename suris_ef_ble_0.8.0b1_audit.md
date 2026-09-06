@@ -1,117 +1,117 @@
-> ИСТОРИЧЕСКИЙ АУДИТ ИЗ ВХОДНОГО АРХИВА. Не подтверждает испытания 0.8.0b4 на оборудовании. Текущий статус: неофициальная нестабильная бета.
+> HISTORICAL OFFLINE AUDIT FROM THE INPUT ARCHIVE. This records earlier development checks. See README.md for current author-reported hardware testing and sensor availability. Current status: unofficial, unstable beta.
 
-# Suris EcoFlow BLE 0.8.0b1 — аудит и результат
+# Suris EcoFlow BLE 0.8.0b1 — historical audit and results
 
-Дата: 6 сентября 2026. Итог: автономный ZIP, 48 сущностей DELTA 2 Max + 29 датчиков Extra Battery 1. Все 66 датчиков включены по умолчанию. Core 2026.8+; offline-проверки — Home Assistant 2026.9.1 / Python 3.14.6.
+Date: September 6, 2026. Result: a standalone ZIP defining 48 DELTA 2 Max entities and 29 Extra Battery 1 sensors. The code supplies enabled defaults for its 66 sensors; actual enabled state in an existing installation can differ. Core 2026.8+; offline checks used Home Assistant 2026.9.1 / Python 3.14.6.
 
-**Это проверенная offline сборка для первого аппаратного запуска. Живой вход в EcoFlow, BLE-аутентификация и работа на твоей станции в этой среде не выполнялись.**
+**This historical report records the offline build prepared before its initial hardware trial. Live EcoFlow sign-in, BLE authentication, and station operation were mocked in that review environment. The author has since reported testing the integration on a real station; see the current README.**
 
-Сравнены загруженные ef_ble 1.1.1 и Suris 0.8.0a6, а также найденная Suris 0.7.5. Точный архив 0.7.4 не найден; выводы о 0.7.x относятся к исходникам 0.7.5. Исходники 0.7.5 содержат 10 custom sensors, X-Boost и два Car Input select. Штатные платформы в этой версии обслуживал родительский ef_ble.
+The uploaded ef_ble 1.1.1 and Suris 0.8.0a6 were compared with the recovered Suris 0.7.5. The exact 0.7.4 archive was not found; statements about 0.7.x refer to the 0.7.5 source. Version 0.7.5 contains 10 custom sensors, X-Boost, and two Car Input selectors. Standard platforms in that version were provided by the parent ef_ble integration.
 
-Короткий changelog: встроен backend 1.1.1; введён явный login/User ID с обязательной BLE-проверкой; исправлены идентичность устройств, дубли, миграция отключённых датчиков и динамическое создание EB1; сохранены команды и Car Input lock; исправлена очистка задач и подписок.
+Changelog: bundled backend 1.1.1; explicit login/User ID choice with mandatory BLE verification; corrected device identity, duplicates, disabled-sensor migration, and dynamic EB1 creation; preserved commands and the Car Input lock; corrected task and subscription cleanup.
 
-## Первопричины и исправления
+## Root causes and fixes
 
-| Наблюдаемая ошибка | Причина в 0.8.0a6 | Изменение в 0.8.0b1 |
+| Observed issue | Cause in 0.8.0a6 | Change in 0.8.0b1 |
 |---|---|---|
-| Не спрашивает User ID | `async_step_user` сразу создавал entry при единственном загруженном родителе; `_async_load_stored_user_id` читал чужой Store; ручной ID не проверялся по BLE | Discovery → выбор login/User ID → BLE-проверка → создание собственного entry; старый parent-backed entry требует reauth |
-| Показывает устройство ef_ble и повторное «Добавить» | Старые unique ID были ID родительского entry либо поздно менялись на MAC; custom device_info использовал `(ef_ble, address)` и общие connections | Unique ID настройки равен SN; проверяются SN и MAC; собственные identifiers Suris; connections пустые; дубль discovery завершается already_configured |
-| Устройство EB есть, датчиков нет | Одноразовый вызов `_get_extra_battery_entities`, пустой `extra_battery=[]`, зависимость от kit_info при ранней инициализации | Raw listener установлен до подключения; BMS heartbeat EB1 создаёт сразу все её сущности; позднее появление не требует reload |
-| Неполный набор платформ | В parent mode upstream-сущности не создавались Suris; standalone зависел от runtime-копии установленного ef_ble; `_vendor` архива был пуст | Нужные 40 файлов протокола находятся внутри ZIP; платформы создаются из полного перечня D2M |
-| Часть датчиков disabled | Копировались disabled defaults upstream; миграции disabled_by не было | Все датчики enabled/visible; одноразовая миграция старых собственных записей очищает disabled_by и hidden_by |
+| Does not ask for User ID | `async_step_user` immediately created an entry when one parent was loaded; `_async_load_stored_user_id` read another integration's Store; manual ID entry was not verified over BLE | Discovery → login/User ID choice → BLE verification → own entry creation; old parent-backed entries require reauthentication |
+| Shows the ef_ble device and a repeated Add prompt | Old unique IDs used the parent entry ID or changed to the MAC late; custom device_info used `(ef_ble, address)` and shared connections | The configuration unique ID is the serial number; serial and MAC are checked; Suris owns its identifiers; connections are empty; duplicate discovery returns already_configured |
+| Extra Battery device exists without sensors | One-time `_get_extra_battery_entities` call, empty `extra_battery=[]`, and a dependency on kit_info during early initialization | Raw listener is installed before connection; an EB1 BMS heartbeat creates its entities; later detection does not require a reload |
+| Incomplete platform inventory | In parent mode, Suris did not create upstream entities; standalone mode depended on a runtime copy of installed ef_ble; the archive's `_vendor` was empty | The ZIP includes the 40 required protocol files; platforms use the complete D2M inventory |
+| Some sensors are disabled | Upstream disabled defaults were copied; disabled_by was not migrated | Enabled/visible defaults; a one-time migration clears disabled_by and hidden_by in old owned entries; later user choices are preserved |
 
-## Полный diff функций
+## Complete feature comparison
 
-Таблица исходного аудита была составлена до сборки (`audit/BEFORE.md` в ZIP). Ниже — фактическое покрытие итоговой реализации. «От родителя» не означает автономную реализацию в Suris 0.7.5.
+The original audit table was prepared before the build (`audit/BEFORE.md`). The following table records implementation coverage. From parent does not mean an independent implementation in Suris 0.7.5. Enabled entries below describe implementation defaults or the offline fixture, not a guarantee of enabled entities in every installed system.
 
-| Функция/entity | ef_ble 1.1.1 | Suris 0.7.x (0.7.5) | текущая 0.8.0a6 | итог 0.8.0b1 |
+| Feature/entity | ef_ble 1.1.1 | Suris 0.7.x (0.7.5) | current 0.8.0a6 | resulting 0.8.0b1 |
 |---|---|---|---|---|
-| sensor.`battery_level` | Да | От родителя | Только standalone | Есть, enabled |
-| sensor.`battery_level_main` | Да | От родителя | Только standalone | Есть, enabled |
-| sensor.`input_power` | Да | От родителя | Только standalone | Есть, enabled |
-| sensor.`output_power` | Да | От родителя | Только standalone | Есть, enabled |
-| sensor.`remaining_time_charging` | Да; disabled default | От родителя | Только standalone | Есть, enabled |
-| sensor.`remaining_time_discharging` | Да; disabled default | От родителя | Только standalone | Есть, enabled |
-| sensor.`battery_voltage` | Да | От родителя | Только standalone | Есть, enabled |
-| sensor.`ac_input_power` | Да | От родителя | Только standalone | Есть, enabled |
-| sensor.`ac_input_voltage` | Да; disabled default | От родителя | Только standalone | Есть, enabled |
-| sensor.`ac_input_current` | Да; disabled default | От родителя | Только standalone | Есть, enabled |
-| sensor.`ac_output_power` | Да | От родителя | Только standalone | Есть, enabled |
-| sensor.`ac_output_voltage` | Да; disabled default | От родителя | Только standalone | Есть, enabled |
-| sensor.`ac_output_current` | Да; disabled default | От родителя | Только standalone | Есть, enabled |
-| sensor.`dc_output_power` | Да | От родителя | Только standalone | Есть, enabled |
-| sensor.`usba_output_power` | Да | От родителя | Только standalone | Есть, enabled |
-| sensor.`usba2_output_power` | Да | От родителя | Только standalone | Есть, enabled |
-| sensor.`usbc_output_power` | Да | От родителя | Только standalone | Есть, enabled |
-| sensor.`usbc2_output_power` | Да | От родителя | Только standalone | Есть, enabled |
-| sensor.`qc_usb1_output_power` | Да | От родителя | Только standalone | Есть, enabled |
-| sensor.`qc_usb2_output_power` | Да | От родителя | Только standalone | Есть, enabled |
-| sensor.`cell_temperature` | Да; disabled default | От родителя | Только standalone | Есть, enabled |
-| sensor.`max_cell_voltage` | Да; disabled default | От родителя | Только standalone | Есть, enabled |
-| sensor.`min_cell_voltage` | Да; disabled default | От родителя | Только standalone | Есть, enabled |
-| sensor.`dc12v_output_voltage` | Да; disabled default | От родителя | Только standalone | Есть, enabled |
-| sensor.`dc12v_output_current` | Да; disabled default | От родителя | Только standalone | Есть, enabled |
-| sensor.`dc_input_voltage` | Да; disabled default | От родителя | Только standalone | Есть, enabled |
-| sensor.`dc_input_current` | Да; disabled default | От родителя | Только standalone | Есть, enabled |
-| sensor.`xt60_1_input_power` | Да | От родителя | Только standalone | Есть, enabled |
-| sensor.`xt60_2_input_power` | Да | От родителя | Только standalone | Есть, enabled |
-| sensor.`inverter_out_temperature` | Нет | Да | Да, чужой device identifier | Сохранён, собственное устройство, enabled |
-| sensor.`inverter_dc_in_temperature` | Нет | Да | Да, чужой device identifier | Сохранён, собственное устройство, enabled |
-| sensor.`power_difference` | Нет | Да | Да, чужой device identifier | Сохранён, собственное устройство, enabled |
-| sensor.`xt60_2_voltage` | Нет | Да | Да, чужой device identifier | Сохранён, собственное устройство, enabled |
-| sensor.`mppt_1_temperature` | Нет | Да | Да, чужой device identifier | Сохранён, собственное устройство, enabled |
-| sensor.`mppt_2_temperature` | Нет | Да | Да, чужой device identifier | Сохранён, собственное устройство, enabled |
-| sensor.`fan_speed_level` | Нет | Да | Да, чужой device identifier | Сохранён, собственное устройство, enabled |
-| sensor.`main_battery_cycles` | Нет | Да | Да, чужой device identifier | Сохранён, собственное устройство, enabled |
-| sensor.`battery_1_num` | Поле декодера; отдельной entity нет | Нет отдельной entity | Нет отдельной entity | Есть, EB1, enabled |
-| sensor.`battery_1_type` | Поле декодера; отдельной entity нет | Нет отдельной entity | Нет отдельной entity | Есть, EB1, enabled |
-| sensor.`battery_1_cell_id` | Поле декодера; отдельной entity нет | Нет отдельной entity | Нет отдельной entity | Есть, EB1, enabled |
-| sensor.`battery_1_err_code` | Поле декодера; отдельной entity нет | Нет отдельной entity | Нет отдельной entity | Есть, EB1, enabled |
-| sensor.`battery_1_sys_ver` | Поле декодера; отдельной entity нет | Нет отдельной entity | Нет отдельной entity | Есть, EB1, enabled |
-| sensor.`battery_1_soc` | Поле декодера; отдельной entity нет | Нет отдельной entity | Нет отдельной entity | Есть, EB1, enabled |
-| sensor.`battery_1_voltage` | Да | От родителя | Только ранняя проверка списка EB | Есть, EB1, enabled |
-| sensor.`battery_1_amp` | Поле декодера; отдельной entity нет | Нет отдельной entity | Нет отдельной entity | Есть, EB1, enabled |
-| sensor.`battery_1_temp` | Поле декодера; отдельной entity нет | Нет отдельной entity | Нет отдельной entity | Есть, EB1, enabled |
-| sensor.`battery_1_open_bms_idx` | Поле декодера; отдельной entity нет | Нет отдельной entity | Нет отдельной entity | Есть, EB1, enabled |
-| sensor.`battery_1_design_cap` | Поле декодера; отдельной entity нет | Нет отдельной entity | Нет отдельной entity | Есть, EB1, enabled |
-| sensor.`battery_1_remain_cap` | Поле декодера; отдельной entity нет | Нет отдельной entity | Нет отдельной entity | Есть, EB1, enabled |
-| sensor.`battery_1_full_cap` | Поле декодера; отдельной entity нет | Нет отдельной entity | Нет отдельной entity | Есть, EB1, enabled |
-| sensor.`slave_1_cycles` | Нет | Да | Да, на основной записи устройства | Есть, EB1, enabled |
-| sensor.`battery_1_soh` | Поле декодера; отдельной entity нет | Нет отдельной entity | Нет отдельной entity | Есть, EB1, enabled |
-| sensor.`battery_1_max_cell_voltage` | Да | От родителя | Только ранняя проверка списка EB | Есть, EB1, enabled |
-| sensor.`battery_1_min_cell_voltage` | Да | От родителя | Только ранняя проверка списка EB | Есть, EB1, enabled |
-| sensor.`battery_1_cell_temperature` | Да | От родителя | Только ранняя проверка списка EB | Есть, EB1, enabled |
-| sensor.`battery_1_min_cell_temp` | Поле декодера; отдельной entity нет | Нет отдельной entity | Нет отдельной entity | Есть, EB1, enabled |
-| sensor.`battery_1_max_mos_temp` | Поле декодера; отдельной entity нет | Нет отдельной entity | Нет отдельной entity | Есть, EB1, enabled |
-| sensor.`battery_1_min_mos_temp` | Поле декодера; отдельной entity нет | Нет отдельной entity | Нет отдельной entity | Есть, EB1, enabled |
-| sensor.`battery_1_bms_fault` | Поле декодера; отдельной entity нет | Нет отдельной entity | Нет отдельной entity | Есть, EB1, enabled |
-| sensor.`battery_1_bq_sys_stat_reg` | Поле декодера; отдельной entity нет | Нет отдельной entity | Нет отдельной entity | Есть, EB1, enabled |
-| sensor.`battery_1_tag_chg_amp` | Поле декодера; отдельной entity нет | Нет отдельной entity | Нет отдельной entity | Есть, EB1, enabled |
-| sensor.`battery_1_battery_level` | Да | От родителя | Только ранняя проверка списка EB | Есть, EB1, enabled |
-| sensor.`battery_1_input_power` | Поле декодера; отдельной entity нет | Нет отдельной entity | Нет отдельной entity | Есть, EB1, enabled |
-| sensor.`battery_1_output_power` | Поле декодера; отдельной entity нет | Нет отдельной entity | Нет отдельной entity | Есть, EB1, enabled |
-| sensor.`battery_1_remain_time` | Поле декодера; отдельной entity нет | Нет отдельной entity | Нет отдельной entity | Есть, EB1, enabled |
-| sensor.`slave_1_power_difference` | Нет | Да | Да, на основной записи устройства | Есть, EB1, enabled |
-| switch.`ac_ports` | Да | От родителя | Только standalone | Исходный метод команды сохранён |
-| switch.`dc_12v_port` | Да | От родителя | Только standalone | Исходный метод команды сохранён |
-| switch.`usb_ports` | Да | От родителя | Только standalone | Исходный метод команды сохранён |
-| switch.`energy_backup` | Да | От родителя | Только standalone | Исходный метод команды сохранён |
-| switch.`xboost` | Нет | Да | Да | Пакет сохранён; свой backend |
-| number.`battery_charge_limit_max` | Да | От родителя | Только standalone | Исходный метод и динамические пределы сохранены |
-| number.`battery_charge_limit_min` | Да | От родителя | Только standalone | Исходный метод и динамические пределы сохранены |
-| number.`energy_backup_battery_level` | Да | От родителя | Только standalone | Исходный метод и динамические пределы сохранены |
-| number.`ac_charging_speed` | Да | От родителя | Только standalone | Исходный метод и динамические пределы сохранены |
-| select.`car_input_1_current` | Нет | Да | Да | 4/6/8 A, исходный пакет, общий lock |
-| select.`car_input_2_current` | Нет | Да | Да | 4/6/8 A, исходный пакет, общий lock; экспериментальный |
-| Другие upstream select / binary_sensor / button / climate для D2M | Нет применимых | Нет | Нет | Чужие модели не добавлены |
+| sensor.`battery_level` | Yes | From parent | Standalone only | Present; enabled default |
+| sensor.`battery_level_main` | Yes | From parent | Standalone only | Present; enabled default |
+| sensor.`input_power` | Yes | From parent | Standalone only | Present; enabled default |
+| sensor.`output_power` | Yes | From parent | Standalone only | Present; enabled default |
+| sensor.`remaining_time_charging` | Yes; disabled default | From parent | Standalone only | Present; enabled default |
+| sensor.`remaining_time_discharging` | Yes; disabled default | From parent | Standalone only | Present; enabled default |
+| sensor.`battery_voltage` | Yes | From parent | Standalone only | Present; enabled default |
+| sensor.`ac_input_power` | Yes | From parent | Standalone only | Present; enabled default |
+| sensor.`ac_input_voltage` | Yes; disabled default | From parent | Standalone only | Present; enabled default |
+| sensor.`ac_input_current` | Yes; disabled default | From parent | Standalone only | Present; enabled default |
+| sensor.`ac_output_power` | Yes | From parent | Standalone only | Present; enabled default |
+| sensor.`ac_output_voltage` | Yes; disabled default | From parent | Standalone only | Present; enabled default |
+| sensor.`ac_output_current` | Yes; disabled default | From parent | Standalone only | Present; enabled default |
+| sensor.`dc_output_power` | Yes | From parent | Standalone only | Present; enabled default |
+| sensor.`usba_output_power` | Yes | From parent | Standalone only | Present; enabled default |
+| sensor.`usba2_output_power` | Yes | From parent | Standalone only | Present; enabled default |
+| sensor.`usbc_output_power` | Yes | From parent | Standalone only | Present; enabled default |
+| sensor.`usbc2_output_power` | Yes | From parent | Standalone only | Present; enabled default |
+| sensor.`qc_usb1_output_power` | Yes | From parent | Standalone only | Present; enabled default |
+| sensor.`qc_usb2_output_power` | Yes | From parent | Standalone only | Present; enabled default |
+| sensor.`cell_temperature` | Yes; disabled default | From parent | Standalone only | Present; enabled default |
+| sensor.`max_cell_voltage` | Yes; disabled default | From parent | Standalone only | Present; enabled default |
+| sensor.`min_cell_voltage` | Yes; disabled default | From parent | Standalone only | Present; enabled default |
+| sensor.`dc12v_output_voltage` | Yes; disabled default | From parent | Standalone only | Present; enabled default |
+| sensor.`dc12v_output_current` | Yes; disabled default | From parent | Standalone only | Present; enabled default |
+| sensor.`dc_input_voltage` | Yes; disabled default | From parent | Standalone only | Present; enabled default |
+| sensor.`dc_input_current` | Yes; disabled default | From parent | Standalone only | Present; enabled default |
+| sensor.`xt60_1_input_power` | Yes | From parent | Standalone only | Present; enabled default |
+| sensor.`xt60_2_input_power` | Yes | From parent | Standalone only | Present; enabled default |
+| sensor.`inverter_out_temperature` | No | Yes | Yes; another integration's device identifier | Preserved; own device; enabled default |
+| sensor.`inverter_dc_in_temperature` | No | Yes | Yes; another integration's device identifier | Preserved; own device; enabled default |
+| sensor.`power_difference` | No | Yes | Yes; another integration's device identifier | Preserved; own device; enabled default |
+| sensor.`xt60_2_voltage` | No | Yes | Yes; another integration's device identifier | Preserved; own device; enabled default |
+| sensor.`mppt_1_temperature` | No | Yes | Yes; another integration's device identifier | Preserved; own device; enabled default |
+| sensor.`mppt_2_temperature` | No | Yes | Yes; another integration's device identifier | Preserved; own device; enabled default |
+| sensor.`fan_speed_level` | No | Yes | Yes; another integration's device identifier | Preserved; own device; enabled default |
+| sensor.`main_battery_cycles` | No | Yes | Yes; another integration's device identifier | Preserved; own device; enabled default |
+| sensor.`battery_1_num` | Decoded field; no separate entity | No separate entity | No separate entity | Present; EB1; enabled default |
+| sensor.`battery_1_type` | Decoded field; no separate entity | No separate entity | No separate entity | Present; EB1; enabled default |
+| sensor.`battery_1_cell_id` | Decoded field; no separate entity | No separate entity | No separate entity | Present; EB1; enabled default |
+| sensor.`battery_1_err_code` | Decoded field; no separate entity | No separate entity | No separate entity | Present; EB1; enabled default |
+| sensor.`battery_1_sys_ver` | Decoded field; no separate entity | No separate entity | No separate entity | Present; EB1; enabled default |
+| sensor.`battery_1_soc` | Decoded field; no separate entity | No separate entity | No separate entity | Present; EB1; enabled default |
+| sensor.`battery_1_voltage` | Yes | From parent | Early battery-list check only | Present; EB1; enabled default |
+| sensor.`battery_1_amp` | Decoded field; no separate entity | No separate entity | No separate entity | Present; EB1; enabled default |
+| sensor.`battery_1_temp` | Decoded field; no separate entity | No separate entity | No separate entity | Present; EB1; enabled default |
+| sensor.`battery_1_open_bms_idx` | Decoded field; no separate entity | No separate entity | No separate entity | Present; EB1; enabled default |
+| sensor.`battery_1_design_cap` | Decoded field; no separate entity | No separate entity | No separate entity | Present; EB1; enabled default |
+| sensor.`battery_1_remain_cap` | Decoded field; no separate entity | No separate entity | No separate entity | Present; EB1; enabled default |
+| sensor.`battery_1_full_cap` | Decoded field; no separate entity | No separate entity | No separate entity | Present; EB1; enabled default |
+| sensor.`slave_1_cycles` | No | Yes | Yes; on the main device entry | Present; EB1; enabled default |
+| sensor.`battery_1_soh` | Decoded field; no separate entity | No separate entity | No separate entity | Present; EB1; enabled default |
+| sensor.`battery_1_max_cell_voltage` | Yes | From parent | Early battery-list check only | Present; EB1; enabled default |
+| sensor.`battery_1_min_cell_voltage` | Yes | From parent | Early battery-list check only | Present; EB1; enabled default |
+| sensor.`battery_1_cell_temperature` | Yes | From parent | Early battery-list check only | Present; EB1; enabled default |
+| sensor.`battery_1_min_cell_temp` | Decoded field; no separate entity | No separate entity | No separate entity | Present; EB1; enabled default |
+| sensor.`battery_1_max_mos_temp` | Decoded field; no separate entity | No separate entity | No separate entity | Present; EB1; enabled default |
+| sensor.`battery_1_min_mos_temp` | Decoded field; no separate entity | No separate entity | No separate entity | Present; EB1; enabled default |
+| sensor.`battery_1_bms_fault` | Decoded field; no separate entity | No separate entity | No separate entity | Present; EB1; enabled default |
+| sensor.`battery_1_bq_sys_stat_reg` | Decoded field; no separate entity | No separate entity | No separate entity | Present; EB1; enabled default |
+| sensor.`battery_1_tag_chg_amp` | Decoded field; no separate entity | No separate entity | No separate entity | Present; EB1; enabled default |
+| sensor.`battery_1_battery_level` | Yes | From parent | Early battery-list check only | Present; EB1; enabled default |
+| sensor.`battery_1_input_power` | Decoded field; no separate entity | No separate entity | No separate entity | Present; EB1; enabled default |
+| sensor.`battery_1_output_power` | Decoded field; no separate entity | No separate entity | No separate entity | Present; EB1; enabled default |
+| sensor.`battery_1_remain_time` | Decoded field; no separate entity | No separate entity | No separate entity | Present; EB1; enabled default |
+| sensor.`slave_1_power_difference` | No | Yes | Yes; on the main device entry | Present; EB1; enabled default |
+| switch.`ac_ports` | Yes | From parent | Standalone only | Original command method preserved |
+| switch.`dc_12v_port` | Yes | From parent | Standalone only | Original command method preserved |
+| switch.`usb_ports` | Yes | From parent | Standalone only | Original command method preserved |
+| switch.`energy_backup` | Yes | From parent | Standalone only | Original command method preserved |
+| switch.`xboost` | No | Yes | Yes | Packet preserved; own backend |
+| number.`battery_charge_limit_max` | Yes | From parent | Standalone only | Original method and dynamic limits preserved |
+| number.`battery_charge_limit_min` | Yes | From parent | Standalone only | Original method and dynamic limits preserved |
+| number.`energy_backup_battery_level` | Yes | From parent | Standalone only | Original method and dynamic limits preserved |
+| number.`ac_charging_speed` | Yes | From parent | Standalone only | Original method and dynamic limits preserved |
+| select.`car_input_1_current` | No | Yes | Yes | 4/6/8 A; original packet; shared lock |
+| select.`car_input_2_current` | No | Yes | Yes | 4/6/8 A; original packet; shared lock; experimental |
+| Other upstream select / binary_sensor / button / climate entities for D2M | None applicable | No | No | Other models not added |
 
-Итого покрыты все 29 штатных датчиков основной станции, 5 штатных датчиков EB1, 4 switches и 4 numbers D2M. Все 13 дополнительных сущностей Suris 0.7.5 сохранены. Дополнительно 22 ранее не выставленных в HA поля BMS получили собственные датчики. 28 полей BMS + расчёт разницы мощности дают 29 датчиков EB1.
+Coverage includes all 29 standard main-station sensors, five standard EB1 sensors, four switches, and four number controls for D2M. All 13 extra Suris 0.7.5 entities were preserved. Another 22 BMS fields previously absent from HA were exposed as sensors. The 28 BMS fields plus calculated power difference yield 29 EB1 sensors.
 
-## Перечень DELTA 2 Max
+## DELTA 2 Max inventory
 
-Имена ниже — суффиксы отображаемых имён и стабильные ключи. Фактические entity_id назначает Home Assistant с учётом уже существующего реестра и пользовательских переименований.
+Names below are display-name suffixes and stable keys. Home Assistant assigns actual entity IDs according to its existing registry and user renames.
 
-| № | Ключ sensor | Имя | Единица | Источник |
+| № | Sensor key | Name | Unit | Source |
 |---:|---|---|---|---|
 | 1 | `battery_level` | Battery Level | % | `ef_ble 1.1.1: battery_level` |
 | 2 | `battery_level_main` | Main Battery Level | % | `ef_ble 1.1.1: battery_level_main` |
@@ -151,23 +151,23 @@
 | 36 | `fan_speed_level` | Fan Speed Level | — | `DirectInvDeltaHeartbeatPack.fan_state` |
 | 37 | `main_battery_cycles` | Main Battery Cycles | cycles | `_BmsHeartbeatBatteryMain.cycles` |
 
-| Платформа | Ключ | Имя | Значения / пределы |
+| Platform | Key | Name | Values / limits |
 |---|---|---|---|
 | switch | `ac_ports` | AC Ports | on/off |
 | switch | `dc_12v_port` | DC 12V Port | on/off |
 | switch | `usb_ports` | USB Ports | on/off |
 | switch | `energy_backup` | Backup Reserve | on/off |
 | switch | `xboost` | X-Boost | on/off |
-| number | `battery_charge_limit_max` | Max Charge Limit | Текущий Min Discharge Limit…100 % |
-| number | `battery_charge_limit_min` | Min Discharge Limit | 0…текущий Max Charge Limit, % |
-| number | `energy_backup_battery_level` | Energy Backup Level | Между текущими min/max лимитами, %; доступен при Backup Reserve |
-| number | `ac_charging_speed` | AC Charging Speed | 1…max_ac_charging_power, W; исходный fallback 1800 W |
+| number | `battery_charge_limit_max` | Max Charge Limit | Current Min Discharge Limit…100 % |
+| number | `battery_charge_limit_min` | Min Discharge Limit | 0…current Max Charge Limit, % |
+| number | `energy_backup_battery_level` | Energy Backup Level | Between current min/max limits, %; available with Backup Reserve |
+| number | `ac_charging_speed` | AC Charging Speed | 1…max_ac_charging_power, W; original 1800 W fallback |
 | select | `car_input_1_current` | Car Input 1 Current | 4 A / 6 A / 8 A |
-| select | `car_input_2_current` | Car Input 2 Current | 4 A / 6 A / 8 A; экспериментальный |
+| select | `car_input_2_current` | Car Input 2 Current | 4 A / 6 A / 8 A; experimental |
 
-## Отдельный перечень Extra Battery 1
+## Separate Extra Battery 1 inventory
 
-| № | Ключ sensor | Имя | Единица | Поле BMS |
+| № | Sensor key | Name | Unit | BMS field |
 |---:|---|---|---|---|
 | 1 | `battery_1_num` | BMS Number (raw) | — | `num` |
 | 2 | `battery_1_type` | BMS Type (raw) | — | `type_` |
@@ -199,88 +199,88 @@
 | 28 | `battery_1_remain_time` | BMS Remaining Time (raw) | — | `remain_time` |
 | 29 | `slave_1_power_difference` | BLE Slave 1 Power Difference | W | `difference` |
 
-`(raw)` означает ровно значение, выданное исходным декодером. Для тока, ёмкостей, времени и кодов не придуманы знак, масштаб или единица. Эти поля видимы и включены; смысл отдельных raw-регистров ещё требует подтверждения. Температурные и процентные поля используют семантику соответствующих именованных BMS-полей; масштаб на реальной прошивке здесь не проверен.
+`(raw)` means the exact value returned by the original decoder. No sign, scale, or unit was invented for current, capacities, time, or codes. These fields have visible and enabled defaults; their actual state in an installation can differ. The meaning of individual raw registers still needs confirmation. Temperature and percentage fields follow the corresponding named BMS fields; their scaling on real firmware was not verified by this offline review.
 
-Для обеих сущностей Power Difference сохранена формула рабочей 0.7.5: **Output − Input**. Положительное значение означает превышение выходной мощности над входной. `battery_level` — агрегированный уровень системы, `battery_level_main` — основной батареи, согласно исходному backend. Поля serial number и kit_info используются в метаданных устройства; Extra Battery 2 не создаётся.
+Both Power Difference entities preserve the working 0.7.5 formula: **Output minus Input**. A positive value means output power exceeds input power. In the original backend, `battery_level` is the aggregate system level and `battery_level_main` is the main battery level. Serial-number and kit_info fields populate device metadata; Extra Battery 2 is not created.
 
-## Авторизация, идентичность и миграция
+## Authentication, identity, and migration
 
-Новая настройка всегда предлагает login либо ручной User ID. В обоих случаях entry создаётся только после authenticated BLE-состояния; неудачный probe освобождает BLE-сеанс. Cloud login использует async-клиент upstream и определение региона AUTO. Сохраняются только SN, BLE address, User ID, признак собственного BLE-подтверждения и служебное состояние EB1. Email/пароль не сохраняются ни в entry, ни в атрибутах flow.
+New setup always offers login or manual User ID entry. Either path creates an entry only after the authenticated BLE state is reached; a failed probe releases the BLE session. Cloud login uses the upstream asynchronous client and AUTO region selection. Only the serial number, BLE address, User ID, own BLE-verification flag, and EB1 bookkeeping are saved. Email and password are retained neither in the entry nor in flow attributes.
 
-Миграция старого Suris entry переносит только собственные адрес/SN/User ID и служебное состояние батареи. Parent-backed запись со ссылкой ef_ble_entry_id не считается источником собственного подтверждённого ID и вызывает reauth. Старый самостоятельный ID сохраняется и проверяется при подключении. Если доступен только старый ID родителя, SN восстанавливается из unique_id собственных Suris entities, затем ищется BLE-объявление; чужой entry не читается.
+Migration transfers only the old Suris entry's own address, serial number, User ID, and battery bookkeeping. A parent-backed entry containing ef_ble_entry_id is not treated as an independently verified ID source and requires reauthentication. An existing independent ID is preserved and checked on connection. If only an old parent ID is available, the serial number is recovered from owned Suris entity unique IDs, followed by BLE discovery; the other integration's entry is not read.
 
-| Запись | Идентификатор |
+| Entry | Identifier |
 |---|---|
-| Config entry Suris | Unique ID = серийный номер DELTA 2 Max |
-| Основное устройство | `(suris_ef_ble_xboost, SN)`; connections пустые |
-| Extra Battery 1 | `(suris_ef_ble_xboost, SN + ":battery_1")`; connections пустые |
-| Связь батареи с основной станцией | `via_device_id` основной записи устройства |
-| Upstream-сущности внутри Suris | `ef_{SN}_{key}` — прежний unique_id сохранён; platform = Suris |
-| Custom Suris-сущности | `suris_ef_ble_{key}_{SN}` — прежний unique_id сохранён |
+| Config entry Suris | Unique ID = DELTA 2 Max serial number |
+| Main device | `(suris_ef_ble_xboost, SN)`; empty connections |
+| Extra Battery 1 | `(suris_ef_ble_xboost, SN + ":battery_1")`; empty connections |
+| Battery link to the main station | Main device entry's `via_device_id` |
+| Upstream entities inside Suris | `ef_{SN}_{key}` — previous unique_id preserved; platform = Suris |
+| Custom Suris entities | `suris_ef_ble_{key}_{SN}` — previous unique_id preserved |
 
-Префикс ef_ в старом unique_id не создаёт зависимости от ef_ble: HA различает entity registry по платформе интеграции. Миграция сохраняет entity_id и по возможности собственный device_id, переносит Slave 1 sensors на EB1, удаляет только собственные EB2/опустевшие старые устройства. Чужие записи ef_ble не редактируются. Связь дополнительной физической батареи использует современный `via_device_id`, заменяющий прежний `via_device` в актуальном API [Device Registry](https://developers.home-assistant.io/blog/2026/08/24/device-registry-follow-up-changes/).
+The ef_ prefix in an old unique_id does not create an ef_ble dependency: HA distinguishes entity-registry records by integration platform. Migration preserves entity_id and, where possible, the owned device_id, moves Slave 1 sensors to EB1, and removes only owned EB2 or empty old devices. Other integrations' ef_ble entries are not edited. The extra battery uses the current `via_device_id`, replacing the previous `via_device` in the [Device Registry API](https://developers.home-assistant.io/blog/2026/08/24/device-registry-follow-up-changes/).
 
-Дубли Suris объединяются по SN или нормализованному MAC. Сначала выгружается дубликат, его собственные entities перемещаются в основную запись, затем удаляется дублирующий entry. Каноническая запись предпочитает собственный User ID; повторная проверка дубликата выполняется после BLE await. Pending discovery карточки убираются после успешного setup.
+Suris duplicates are merged by serial number or normalized MAC. The duplicate is unloaded first, its owned entities are moved to the primary entry, and then the duplicate entry is removed. The canonical entry prefers its own User ID; duplicate detection is repeated after the BLE await. Pending discovery cards are removed after successful setup.
 
-В старых Suris записях одноразово снимаются disabled_by/hidden_by у всех sensors, включая вручную отключённые ранее — согласно явному требованию задания. После миграции последующие пользовательские отключения сохраняются. Категория diagnostic не назначается. [Правила HA для disabled entities](https://developers.home-assistant.io/docs/entity_registry_disabled_by/).
+For old Suris entries, a one-time migration clears disabled_by/hidden_by for sensors, including those previously disabled manually, as explicitly requested during development. Subsequent user disabling is preserved after migration. No diagnostic category is assigned. See [HA rules for disabled entities](https://developers.home-assistant.io/docs/entity_registry_disabled_by/).
 
-## BLE и lifecycle
+## BLE and lifecycle
 
-При каждом setup/retry создаётся собственный экземпляр backend. Повторные подключения обслуживает механизм retry/reload Home Assistant: встроенный независимый reconnect backend отключён, чтобы не было двух конкурирующих циклов. Потеря соединения планирует один reload; отсутствие объявления или таймаут возвращает ConfigEntryNotReady, ошибка авторизации — ConfigEntryAuthFailed. Проверка подключения ограничена 60 секундами и двумя попытками backend.
+Each setup/retry creates an owned backend instance. Reconnection uses Home Assistant's retry/reload mechanism; the backend's independent reconnect loop is disabled to prevent competing loops. Connection loss schedules one reload; missing advertisements or timeouts produce ConfigEntryNotReady, and authentication errors produce ConfigEntryAuthFailed. Connection verification is limited to 60 seconds and two backend attempts.
 
-Raw listener подключён до BLE-auth, поэтому ранний BMS не теряется. Поздний BMS EB1 добавляет 29 датчиков один раз за setup. Факт обнаружения сохраняется в собственном entry: после reload уже известная батарея и её entities остаются в реестре, но unavailable до свежего heartbeat. Пакет kit_info с признаком отсутствия отключает доступность EB1, а не удаляет её историю.
+The raw listener is installed before BLE authentication so early BMS data is not lost. A late EB1 BMS packet adds 29 sensors once per setup. Detection is recorded in the owned entry: after reload, a known battery and its entities remain in the registry but are unavailable until a fresh heartbeat. A kit_info packet indicating absence marks EB1 unavailable without deleting its history.
 
-Уведомления направляются в loop HA через call_soon_threadsafe при вызове из другого потока; публикация состояния откладывается до завершения парсинга. Unload закрывает listener/timer subscriptions, отменяет и дожидается backend tasks, освобождает BLE, обнуляет runtime_data. Если HA не может выгрузить платформы, действующий runtime сохраняется. Setup failure и отмена probe проходят очистку. Собственная синхронная файловая/сетевая загрузка в event loop отсутствует; криптография остаётся реализацией исходного backend.
+Notifications from another thread are directed to the HA event loop with call_soon_threadsafe; state publication waits until parsing finishes. Unload closes listener/timer subscriptions, cancels and awaits backend tasks, releases BLE, and clears runtime_data. If HA cannot unload platforms, the running runtime is retained. Setup failure and probe cancellation also clean up. No custom synchronous file or network loading is performed in the event loop; cryptography remains the upstream implementation.
 
-Car Input использует общий async lock и исходный парный пакет 0x47. После смены поколения соединения оба значения очищаются. До получения свежих допустимых 4/6/8 A для обоих входов запись запрещена: команда отправляет оба лимита. Расшифровка второго лимита из первых четырёх байтов `res` сохранена из Suris 0.7.5. Физическая работа Car Input 2 этим не доказана.
+Car Input uses a shared asynchronous lock and the original paired 0x47 packet. Both values are cleared when the connection generation changes. Writes are blocked until fresh valid 4/6/8 A values are available for both inputs, because the command sends both limits. Decoding the second limit from the first four bytes of `res` is preserved from Suris 0.7.5. This does not prove physical Car Input 2 behavior.
 
-## Границы изменений протокола
+## Scope of protocol changes
 
-Встроены 40 Python-файлов транзитивных зависимостей D2M из загруженного ef_ble 1.1.1; 34 побайтово совпадают. Изменены только шесть файлов:
+The ZIP contains 40 Python files forming the D2M transitive dependencies from the uploaded ef_ble 1.1.1; 34 are byte-identical. Only six files were changed:
 
-| Файл внутри `_vendor/eflib` | Изменение |
+| File within `_vendor/eflib` | Change |
 |---|---|
-| `__init__.py` | Импорт только D2M с сохранением нужного порядка импорта Device |
-| `devices/__init__.py` | Убран автоматический импорт остальных моделей |
-| `connection.py` | Ожидание отмены задач; учёт безымянных таймеров для очистки |
-| `devicebase.py` | Защита доступа к байту 22 короткого BLE advertisement |
-| `devices/_delta2_base.py` | Обработка только первого kit в списке батарей |
-| `listeners.py` | Идемпотентная отписка; обход снимка списка listeners |
+| `__init__.py` | Import only D2M while preserving the required Device import order |
+| `devices/__init__.py` | Remove automatic imports of other models |
+| `connection.py` | Await task cancellation; track unnamed timers for cleanup |
+| `devicebase.py` | Guard access to byte 22 in short BLE advertisements |
+| `devices/_delta2_base.py` | Process only the first kit in the battery list |
+| `listeners.py` | Idempotent unsubscribe; iterate a listener-list snapshot |
 
-AST-diff методов классов в devicebase.py, _delta2_base.py и delta2_max.py: 74 методов полностью совпадают; отличаются только `_ScanRecordV2.from_manufacturer_data` и `Delta2Base._update_extra_batteries`. Все исходные методы управления, parser dispatch, encryption/framing и auth-логика сохранены. Пакеты X-Boost и Car Input сохраняют прежние адреса, command ID, версию и структуру payload. Сырые неизвестные команды, reset и firmware-команды не добавлялись и не отправлялись.
+AST comparison of class methods in devicebase.py, _delta2_base.py, and delta2_max.py found 74 identical methods; only `_ScanRecordV2.from_manufacturer_data` and `Delta2Base._update_extra_batteries` differ. Original control methods, parser dispatch, encryption/framing, and authentication logic are preserved. X-Boost and Car Input packets retain their addresses, command IDs, versions, and payload layouts. No unknown raw, reset, or firmware commands were added or sent.
 
-В ZIP присутствуют Apache-2.0 LICENSE, UPSTREAM_NOTICE.md, per-file SHA-256 и полный diff изменённых vendored файлов. Источник протокола — загруженный архив 1.1.1, не текущая ветка GitHub. Лицензия дополнена из [репозитория upstream](https://github.com/rabits/ha-ef-ble/blob/main/LICENSE), поскольку в исходном component ZIP её не было; исходные notices сохранены.
+The ZIP includes the Apache-2.0 LICENSE, UPSTREAM_NOTICE.md, per-file SHA-256 hashes, and a full diff of modified vendored files. The protocol source was the uploaded 1.1.1 archive rather than the current GitHub branch. During this earlier build, the license was supplemented from the [upstream repository](https://github.com/rabits/ha-ef-ble/blob/main/LICENSE) because its input component ZIP lacked it; original notices were retained. The later 0.8.0b3 input already included that license, as recorded in LICENSE_REVIEW.md.
 
-## Что проверено
+## Verification performed
 
-| Уровень | Результат | Практический предел |
+| Level | Result | Practical limit |
 |---|---|---|
-| Статика и compile | 52 Python-файла скомпилированы; JSON manifest/переводов читаются; 29/29 + 5/5 upstream sensors и 28/28 BMS-полей покрыты; абсолютных импортов внешнего ef_ble нет | Не доказывает поведение физической станции |
-| Реальные классы HA, mock BLE/cloud | 20 pytest-проверок на Core 2026.9.1 прошли | BLE-пакеты синтетические, сеть login заменена mock |
-| Платформы и реестры HA | Реальный EntityPlatform зарегистрировал 48 entities станции, затем 77 после BMS; все enabled/visible; 29 привязаны к EB1; EB2 отсутствует | Это запуск API HA в тестовом процессе, не полный холодный старт пользовательского HA |
-| Реальный loader/config flow manager HA | Загрузка custom manifest/config_flow; user → выбор auth → manual ID → create entry; повторный bluetooth discovery → already_configured | Передача BLE и успешный auth в этом тесте подменены |
-| Lifecycle/migration | Setup/unload/failure/cancellation; ранний/поздний BMS; callbacks из другого потока; очистка задач/таймеров; миграция, reauth, duplicate merge и прежние entity_id | Радиопомехи, реальная недоступность станции и восстановление после полного restart HA требуют аппаратного запуска |
-| Команды | Исходные upstream методы сохранены по diff; lock/защита stale Car Input проверены с mock send | Физические повторные тесты уже подтверждённых команд не выполнялись; Car Input 2 не подтверждён |
+| Static checks and compilation | 52 Python files compiled; manifest/translation JSON parsed; all 29/29 + 5/5 upstream sensors and 28/28 BMS fields covered; no absolute imports of external ef_ble | Does not prove physical station behavior |
+| Real HA classes with mocked BLE/cloud | 20 pytest checks passed on Core 2026.9.1 | Synthetic BLE packets; login networking mocked |
+| HA platforms and registries | Real EntityPlatform registered 48 station entities, then 77 after BMS; all enabled/visible in the test fixture; 29 assigned to EB1; no EB2 | HA APIs ran in a test process; this was not a complete cold start of the user's HA system |
+| Real HA loader/config-flow manager | Loads custom manifest/config_flow; user → authentication choice → manual ID → create entry; repeated Bluetooth discovery → already_configured | BLE transport and successful authentication were mocked in this test |
+| Lifecycle/migration | Setup/unload/failure/cancellation; early/late BMS; cross-thread callbacks; task/timer cleanup; migration, reauthentication, duplicate merging, and previous entity IDs | Radio interference, actual station unavailability, and recovery after a full HA restart require hardware testing |
+| Commands | Diff preserves original upstream methods; lock and stale Car Input protection checked with mocked send | This review did not repeat physical tests of previously confirmed commands; Car Input 2 was not confirmed |
 
-В логе pytest пять DeprecationWarning из установленного Home Assistant HTTP server и стороннего backoff. В тестах предупреждений об устаревшем API, вызванных Suris, не выявлено; это не обещание отсутствия любых будущих предупреждений. Использованы актуальные registry APIs с `config_entry_id` и `via_device_id`; старые версии HA до 2026.8 не поддерживаются этой сборкой. [Изменения Device Registry](https://developers.home-assistant.io/blog/2026/07/21/device-registry-single-config-entry/).
+The pytest log records five DeprecationWarning messages from the installed Home Assistant HTTP server and third-party backoff. The tests found no deprecated-API warnings caused by Suris; this does not guarantee the absence of future warnings. Current registry APIs use `config_entry_id` and `via_device_id`; HA versions before 2026.8 are not supported by this build. See [Device Registry changes](https://developers.home-assistant.io/blog/2026/07/21/device-registry-single-config-entry/).
 
-Полный лог — `audit/tests_2026.9.1.txt`. Исходники 20 проверок — `verification/test_integration.py`. Для повторения вне рабочего HA создай отдельное окружение Python 3.14, установи `verification/requirements-tested.txt` и из корня распакованного ZIP выполни `PYTHONPATH=. python -m pytest -q verification/test_integration.py --tb=short`. Реальные credentials тестам не нужны.
+Full log: `audit/tests_2026.9.1.txt`. Source of the 20 checks: `verification/test_integration.py`. To repeat them outside a working HA installation, create a separate Python 3.14 environment, install `verification/requirements-tested.txt`, and run `PYTHONPATH=. python -m pytest -q verification/test_integration.py --tb=short` from the extracted ZIP root. Tests require no real credentials.
 
-## Установка и только первый аппаратный тест
+## Historical installation and initial hardware-test plan
 
-Для обновления с сохранением entity_id полностью замени папку `/config/custom_components/suris_ef_ble_xboost` папкой из ZIP и перезапусти HA, сохранив Suris config entry. Если старая запись не имеет собственного ID, интерфейс попросит reauth. Ручное редактирование .storage не требуется.
+For an update preserving entity IDs, completely replace `/config/custom_components/suris_ef_ble_xboost` with the ZIP folder and restart HA while retaining the Suris configuration entry. An old entry without its own ID prompts for reauthentication. Manual .storage editing is unnecessary. Use the current README for current installation instructions.
 
-Для запрошенной проверки чистой автономной регистрации:
+The following was the requested clean independent-registration test plan for this earlier build:
 
-1. Удали старые config entries ef_ble и Suris через «Настройки → Устройства и службы». Удали `/config/custom_components/ef_ble`. Установи новую папку Suris из ZIP и перезапусти HA. При чистом тесте старые записи удаляются; вариант обновления с сохранением записей описан выше.
-2. Закрой EcoFlow app. Добавь Suris, выбери обнаруженную DELTA 2 Max, затем «Войти в EcoFlow» или «У меня есть User ID». Проверь, что этот выбор действительно показан.
-3. Введи данные и дождись BLE-проверки: только её успех должен завершить настройку. Убедись, что Suris подключена при отсутствии ef_ble.
-4. Проверь 48 сущностей станции. После BMS heartbeat проверь отдельное устройство Extra Battery 1 с 29 датчиками и связью с основной станцией. Все 66 датчиков должны быть enabled. Не получившие свой heartbeat поля могут временно быть unavailable; это отличается от disabled.
+1. Remove old ef_ble and Suris configuration entries through Settings → Devices & services. Remove `/config/custom_components/ef_ble`. Install the new Suris folder from the ZIP and restart HA. This clean test removes old entries; the update method preserving entries is described above.
+2. Close the EcoFlow app. Add Suris, select the discovered DELTA 2 Max, and choose EcoFlow sign-in or manual User ID entry. Confirm that the choice is displayed.
+3. Enter credentials and wait for BLE verification; setup should finish only after success. Confirm that Suris connects without ef_ble installed.
+4. Check the 48 defined station entities. After a BMS heartbeat, check for a separate Extra Battery 1 device with 29 sensors linked to the main station. The original clean-test target was 66 enabled sensors; existing installations can contain disabled entities. Fields awaiting their heartbeat may temporarily be unavailable, which is distinct from disabled.
 
-**На этом первый тест заканчивается.** Повторно проверять уже подтверждённые AC Ports, DC 12V, USB, X-Boost, Backup Reserve и number controls не нужно. Car Input 2 в первом тесте не трогаем. Отдельные проверки длительной устойчивости, настоящего disconnect/reconnect и холодного старта с отсутствующей станцией пока остаются неподтверждёнными на железе.
+**That concluded the original initial-test plan.** It did not require repeating previously confirmed AC Ports, DC 12V, USB, X-Boost, Backup Reserve, or number-control tests, or using Car Input 2 in the first trial. Long-term stability, real disconnect/reconnect, and cold starts with the station absent had not been established by that offline review. The current README separately records the author's later report of real-station testing.
 
-## Состав архива
+## Archive contents
 
-`custom_components/suris_ef_ble_xboost/` — устанавливаемый компонент вместе с `_vendor/eflib`, README, LICENSE и UPSTREAM_NOTICE. `verification/` — воспроизводимые проверки. `audit/` — исходный и итоговый inventory, SHA-256, protocol diff, static checks и pytest log. Дополнительные папки в HA копировать не требуется.
+`custom_components/suris_ef_ble_xboost/` is the installed component, including `_vendor/eflib`, README, LICENSE, and UPSTREAM_NOTICE. `verification/` contains reproducible checks. `audit/` contains the initial and final inventories, SHA-256 hashes, protocol diff, static checks, and pytest log. Extra folders do not need to be copied into HA.
 
-Внешний ef_ble не требуется ни для импорта, ни для credentials, ни для запуска. Штатный Bluetooth Home Assistant и стандартные Python-зависимости из manifest остаются необходимыми. Login-путь обращается к EcoFlow API только при вводе login; ручной User ID и дальнейшая работа используют BLE.
+External ef_ble is not required for imports, credentials, or startup. Home Assistant Bluetooth and the standard Python dependencies in the manifest are still required. The login path contacts the EcoFlow API only during sign-in; manual User ID entry and subsequent operation use BLE.

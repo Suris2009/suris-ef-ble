@@ -1,38 +1,43 @@
 # Suris EcoFlow BLE 0.8.0b4 — UNOFFICIAL / UNSTABLE BETA
 
 > [!CAUTION]
-> **НЕОФИЦИАЛЬНАЯ НЕСТАБИЛЬНАЯ ВЕРСИЯ. ИСПОЛЬЗУЙ ОСТОРОЖНО И НА СВОЙ РИСК.**
-> Гарантий нет. В максимально допустимых законом пределах авторы и участники
-> не несут никакой ответственности за использование и его последствия.
-> Это не релиз EcoFlow и не официальный релиз rabits/ha-ef-ble.
+> **UNOFFICIAL, UNSTABLE BETA. USE WITH CAUTION AND AT YOUR OWN RISK.**
+> No warranties are provided. To the maximum extent permitted by law, authors
+> and contributors accept no liability for its use or consequences.
+> This is not an EcoFlow release or an official rabits/ha-ef-ble release.
 
-Подготовка 0.8.0b3 к открытой публикации:
+This version prepares 0.8.0b3 for public distribution:
 
-- Добавлены корневые LICENSE/NOTICE, благодарности, описание происхождения кода,
-  сторонних зависимостей и отдельный отказ от гарантий/ответственности.
-- Все 40 файлов библиотеки сверены с upstream v1.1.1, commit `ef02d81a2720de256548a5d515af814cc3244ee9`.
-  На шести изменённых файлах усилены уведомления; 34 файла сохранены побайтово.
-- Предупреждения добавлены в README, инструкцию установки и формы настройки HA
-  на русском, украинском и английском. Интеграция отмечена как Unofficial Beta.
-- Версия повышена до 0.8.0b4; подготовлены метаданные для отдельного репозитория.
-- Логика BLE, авторизации и команд, состав сущностей, их идентификаторы и
-  бирюзовое оформление 0.8.0b3 сохранены.
+- Adds root and installed license notices, attribution, credits, and a separate disclaimer.
+- Compares all 40 vendored library files with upstream v1.1.1, commit
+  `ef02d81a2720de256548a5d515af814cc3244ee9`: 34 files remain byte-identical,
+  and the six modified files carry prominent modification notices.
+- Adds caution notices to the README, installation instructions, and Home Assistant
+  setup forms in English and Ukrainian. The integration is labeled Unofficial Beta.
+- Updates the version to 0.8.0b4 and supplies metadata for this repository.
+- Preserves BLE, authentication and command logic, entity inventory and identifiers,
+  and the turquoise appearance of 0.8.0b3.
 
-**Осторожно перед установкой:** сделай резервную копию HA и сохрани прошлую сборку.
-**Осторожно при управлении:** проверяй каждую команду на станции; не оставляй
-первое тестирование без присмотра. **Car Input 2 — экспериментальная функция.**
+**The author has tested the integration on a real EcoFlow DELTA 2 Max station.**
+This does not establish coverage of every feature, firmware, or configuration.
+Additional automated publication checks passed 20 tests using mocked BLE and cloud
+calls on Home Assistant 2026.9.1 / Python 3.14.6. Those automated checks did not
+exercise real hardware or a live cloud login. The release remains an unstable beta.
 
-В комплекте результаты offline-проверок. Проверки реальной станции и облачного
-входа не выполнялись; статус beta сохраняется независимо от результата тестов.
-Полные условия: [DISCLAIMER.md](https://github.com/Suris2009/suris-ef-ble/blob/main/DISCLAIMER.md).
+The code defines up to 66 sensors; **not all are necessarily enabled in an
+installed integration**. Extra Battery 1 sensors appear after battery detection.
 
-**Большое спасибо [rabits](https://github.com/rabits),
-[GnoX](https://github.com/GnoX) и всем создателям и участникам
-[EcoFlow BLE](https://github.com/rabits/ha-ef-ble)!** Эта работа основана на их
-реализации протокола и поддержке устройств; благодарность не означает одобрения
-ими изменений Suris.
+**Before installation, use caution:** back up Home Assistant and keep the previous build.
+**During operation, use caution:** verify commands directly on the station and supervise
+initial testing. **Car Input 2 is experimental.** Avoid critical loads.
+See the [full disclaimer](https://github.com/Suris2009/suris-ef-ble/blob/main/DISCLAIMER.md).
 
-**English:** Unofficial, unstable beta. Use with caution and at your own risk.
-No warranties; no liability to the maximum extent permitted by law. Back up
-Home Assistant, supervise tests, verify device behavior, and avoid critical loads.
-Not endorsed by EcoFlow or the upstream project. See DISCLAIMER.md.
+**Thank you to [rabits](https://github.com/rabits), [GnoX](https://github.com/GnoX),
+and all creators and contributors of [EcoFlow BLE](https://github.com/rabits/ha-ef-ble)!**
+This project builds on their protocol implementation and device support.
+Acknowledgment does not imply their endorsement of Suris modifications.
+
+Download `suris_ef_ble_0.8.0b4.zip` below. Installation instructions are in the
+[README](https://github.com/Suris2009/suris-ef-ble#installation-and-update).
+
+**Unofficial / unstable beta. Use with caution and at your own risk.**

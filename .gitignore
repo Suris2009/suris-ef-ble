@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+.ha-venv/
+.env
+.env.*
+!.env.example
+*.log
+.storage/
+secrets.yaml
+configuration.yaml
+*.zip
+dist/
+.DS_Store
+Thumbs.db
