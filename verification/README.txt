@@ -1,5 +1,7 @@
 Offline regression verification. BLE transport, cloud login, and selected setup
 calls are mocked. These tests do not prove hardware behavior or real cloud login.
+Separately, the author reports testing the integration on a real EcoFlow DELTA 2 Max.
+That report does not establish coverage of every feature, firmware, or configuration.
 Use an isolated Python 3.14 environment, never a running Home Assistant install.
 From the root of this repository or the unpacked release:
 
