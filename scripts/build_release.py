@@ -12,7 +12,7 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 TOP_FILES = {
     '.gitignore', 'README.md', 'LICENSE', 'NOTICE', 'DISCLAIMER.md',
-    'UPSTREAM_NOTICE.md', 'THIRD_PARTY_NOTICES.md', 'LICENSE_REVIEW_RU.md',
+    'UPSTREAM_NOTICE.md', 'THIRD_PARTY_NOTICES.md', 'LICENSE_REVIEW.md',
     'RELEASE_NOTES.md', 'hacs.json', 'suris_ef_ble_0.8.0b1_audit.md',
 }
 TOP_DIRS = {'custom_components', 'audit', 'verification', 'scripts', '.github'}
