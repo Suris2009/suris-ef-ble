@@ -18,12 +18,28 @@ from .const import (
     CONF_USER_ID, DOMAIN, normalize_address, same_device, valid_serial, valid_user_id,
 )
 from .driver import connect_device, create_device, disconnect_device, profile_from_service_info
+from .recovery import DATA_BLE_RECOVERY, BleRecovery
 from .registry import async_merge_duplicates, async_prepare_registry, recover_own_serial
 from .runtime import SurisRuntime
 
 _LOGGER = logging.getLogger(__name__)
 PLATFORMS = [Platform.SENSOR, Platform.SWITCH, Platform.NUMBER, Platform.SELECT]
 type SurisConfigEntry = ConfigEntry[SurisRuntime]
+
+
+async def async_setup(hass, config):
+    """Keep the recovery listener alive while entries wait for setup retries."""
+    data = hass.data.setdefault(DOMAIN, {})
+    if DATA_BLE_RECOVERY not in data:
+        recovery = BleRecovery(hass)
+        recovery.start()
+        data[DATA_BLE_RECOVERY] = recovery
+    return True
+
+
+async def async_remove_entry(hass, entry: SurisConfigEntry):
+    if recovery := hass.data.get(DOMAIN, {}).get(DATA_BLE_RECOVERY):
+        recovery.remove_entry(entry.entry_id)
 
 
 async def async_setup_entry(hass, entry: SurisConfigEntry):
@@ -44,6 +60,7 @@ async def async_setup_entry(hass, entry: SurisConfigEntry):
     device = create_device(hass, entry.data)
     runtime = SurisRuntime(hass, entry, device)
     entry.runtime_data = runtime
+    platforms_started = False
     try:
         await connect_device(device, entry.data[CONF_USER_ID])
         if entry.data.get(CONF_AUTH_SOURCE) != AUTH_SOURCE:
@@ -61,6 +78,7 @@ async def async_setup_entry(hass, entry: SurisConfigEntry):
             runtime._in_loop(schedule)
 
         runtime.add_remover(device.on_disconnect(on_disconnect))
+        platforms_started = True
         await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
         if not runtime.authenticated:
             raise ConfigEntryNotReady("Device disconnected during platform setup")
@@ -82,7 +100,8 @@ async def async_setup_entry(hass, entry: SurisConfigEntry):
     except BaseException:
         runtime.close()
         try:
-            await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+            if platforms_started:
+                await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
         finally:
             await disconnect_device(device)
             entry.runtime_data = None

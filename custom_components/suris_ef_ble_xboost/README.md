@@ -1,10 +1,10 @@
-# Suris EcoFlow BLE 0.8.0b5 — 100% local BLE, no internet required
+# Suris EcoFlow BLE 0.8.0b6 — 100% local BLE, no internet required
 
 **100% local BLE operation. Works without internet or EcoFlow cloud.**
 
 > [!CAUTION]
 > **UNOFFICIAL / UNSTABLE BETA — USE WITH CAUTION AND AT YOUR OWN RISK.**
-> The author has tested the integration on a real station. It remains an unstable beta.
+> The author reports testing earlier releases on a real station. This build remains an unstable beta.
 > This project is not endorsed by EcoFlow and is not an official EcoFlow BLE / ha-ef-ble release.
 > **No warranties are provided. To the maximum extent permitted by law, the authors
 > and contributors accept no liability for its use or consequences.**
@@ -59,16 +59,36 @@ establish that the second input is interpreted correctly on every firmware.
 
 Requires **Home Assistant Core 2026.8+** and a working Bluetooth adapter or proxy.
 
+## BLE recovery in 0.8.0b6
+
+When Home Assistant is waiting to retry setup and receives a new connectable BLE
+advertisement from the configured station, the integration requests one early
+retry through Home Assistant's existing reload mechanism. It ignores cached
+advertisements during subscription and does not interrupt a working connection,
+setup in progress, a disabled entry, or Home Assistant shutdown.
+
+Repeated advertisements do not keep restarting setup. If the early attempt fails,
+Home Assistant's ordinary retry schedule continues. A new disappearance and
+reappearance, as reported by Home Assistant Bluetooth, permits another early retry.
+This uses the existing scanner; it adds no polling timer or active scan request.
+The Bluetooth adapter or proxy must be receiving the station's advertisements.
+
+Failed BLE connections also skip platform unloading when platform setup has not
+started. This avoids the misleading `Config entry was never loaded!` cleanup errors.
+XT60 controls, device commands, authentication, sensors, and entity IDs are unchanged.
+
 ## Testing status
 
-**The author has tested the integration on a real EcoFlow DELTA 2 Max station.**
+**The author reports testing earlier releases on a real EcoFlow DELTA 2 Max station.**
 This does not establish coverage of every feature, firmware, or configuration.
 The release remains an **unofficial, unstable beta**.
 
-Additional automated checks for publication ran on Home Assistant Core 2026.9.1
-and Python 3.14.6: **20 tests passed**. Those automated checks used mocked BLE
-and cloud calls; they did not exercise real hardware or a live cloud login.
-The recorded results are included under `audit/` and `verification/`.
+Automated checks for 0.8.0b6 ran on Home Assistant Core 2026.9.1 and Python 3.14.6:
+**34 tests passed**. Recovery checks use the real Home Assistant Bluetooth manager
+and configuration-entry APIs with synthetic advertisements and simulated connection
+attempts. The new recovery behavior has not been tested on a physical station.
+No live cloud login was exercised. Results and reproducible checks are included
+under `audit/` and `verification/`.
 
 ## Installation and update
 
@@ -86,7 +106,7 @@ as a custom repository:
 1. In HACS, open the top-right menu and select **Custom repositories**.
 2. Add `https://github.com/Suris2009/suris-ef-ble` with category **Integration**.
 3. Open the repository, select **Download**, expand **Need a different version?**,
-   and select `v0.8.0b5`, which is marked as a pre-release.
+   and select `v0.8.0b6`, which is marked as a pre-release.
 4. Restart Home Assistant before configuring or testing the integration.
 
 HACS downloads the dedicated `suris_ef_ble_xboost.zip` asset. Integration
@@ -95,8 +115,9 @@ files are stored directly at the archive root so HACS installs them into
 
 ### Manual installation
 
-1. Download `suris_ef_ble_0.8.0b5.zip` from [Releases](https://github.com/Suris2009/suris-ef-ble/releases).
-   Select the release marked **Pre-release**. There is no stable release of this version.
+1. Use the supplied `suris_ef_ble_0.8.0b6.zip`, or download it from
+   [Releases](https://github.com/Suris2009/suris-ef-ble/releases) once published.
+   This is a beta build.
 2. Extract the ZIP on your computer and locate `custom_components/suris_ef_ble_xboost`.
 3. Replace `/config/custom_components/suris_ef_ble_xboost` in Home Assistant with
    that complete folder. Do not merge old and new `_vendor` files. Restart Home Assistant.
