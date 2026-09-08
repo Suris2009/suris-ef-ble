@@ -4,7 +4,7 @@
 """Suris-owned configuration; no credentials or identifiers are hardcoded."""
 
 DOMAIN = "suris_ef_ble_xboost"
-VERSION = "0.8.0b6"
+VERSION = "0.8.0"
 ENTRY_TITLE = "Suris EcoFlow BLE"
 CONF_ADDRESS = "address"
 CONF_SERIAL_NUMBER = "serial_number"

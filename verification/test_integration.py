@@ -134,7 +134,14 @@ async def test_login_choice_and_ble_validation(hass):
     result = await f.async_step_bluetooth(service_info())
     assert result['step_id'] == 'bluetooth_confirm'
     menu = await f.async_step_bluetooth_confirm({})
-    assert menu['menu_options'] == ['login', 'user_id']
+    assert menu['menu_options'] == {
+        'login': 'Log in with EcoFlow email and password',
+        'user_id': 'Enter EcoFlow User ID manually',
+    }
+    strings = json.loads(Path('custom_components/suris_ef_ble_xboost/strings.json').read_text())
+    auth_strings = strings['config']['step']['auth']
+    assert auth_strings['description']
+    assert set(auth_strings['menu_option_descriptions']) == {'login', 'user_id'}
     assert (await f.async_step_user_id())['step_id'] == 'user_id'
     target = 'custom_components.suris_ef_ble_xboost.config_flow.validate_credentials'
     with patch(target, AsyncMock(side_effect=ConfigEntryAuthFailed('no'))):
@@ -404,7 +411,10 @@ async def test_reauth_keeps_registry_migration_flag(hass):
     f = flow(hass, 'reauth')
     f.context['entry_id'] = entry.entry_id
     menu = await f.async_step_reauth(entry.data)
-    assert menu['menu_options'] == ['login', 'user_id']
+    assert menu['menu_options'] == {
+        'login': 'Log in with EcoFlow email and password',
+        'user_id': 'Enter EcoFlow User ID manually',
+    }
     with patch('custom_components.suris_ef_ble_xboost.config_flow.validate_credentials', AsyncMock()), patch.object(hass.config_entries, 'async_schedule_reload'):
         result = await f.async_step_user_id({'user_id':'12345678'})
     assert result['reason'] == 'reauth_successful'
@@ -455,7 +465,7 @@ async def test_ha_loader_and_managed_initial_config_flow(hass):
     from homeassistant import loader
     loader.async_setup(hass)
     integration = await loader.async_get_integration(hass,DOMAIN)
-    assert integration.version == '0.8.0b6'
+    assert integration.version == '0.8.0'
     assert integration.dependencies == ['bluetooth']
     await integration.async_get_platform('config_flow')
     manager = hass.config_entries.flow

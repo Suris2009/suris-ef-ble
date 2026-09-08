@@ -2,7 +2,7 @@
 
 **Suris EcoFlow BLE: 100% local BLE operation. No internet or EcoFlow cloud connection is required during operation.**
 
-**UNOFFICIAL, UNSTABLE BETA. USE WITH CAUTION AND AT YOUR OWN RISK.**
+**UNOFFICIAL INTEGRATION. USE WITH CAUTION AND AT YOUR OWN RISK.**
 
 Suris EcoFlow BLE is an independent experimental project. It is not developed,
 certified, endorsed, or supported by EcoFlow and is not an official release of
@@ -30,7 +30,7 @@ command at the station. Commands may change power outputs and charging settings;
 telemetry may be stale or wrong. Car Input 2 is experimental.
 **After updates:** recheck connectivity, readings, controls, and automations.
 Stop testing and disable the integration if behavior is unexpected. Never use
-this beta as the sole protection or control for critical power equipment.
+this integration as the sole protection or control for critical power equipment.
 
 Use only devices/accounts you own or are authorized to access. Respect the
 manufacturer's instructions and applicable service terms. Code licensing does

@@ -1,7 +1,7 @@
-# Suris EcoFlow BLE 0.8.0b6 — 100% local BLE / No internet required · UNOFFICIAL / UNSTABLE BETA
+# Suris EcoFlow BLE 0.8.0 — 100% local BLE / No internet required · UNOFFICIAL
 
 > [!CAUTION]
-> **UNOFFICIAL, UNSTABLE BETA. USE WITH CAUTION AND AT YOUR OWN RISK.**
+> **UNOFFICIAL INTEGRATION. USE WITH CAUTION AND AT YOUR OWN RISK.**
 > No warranties are provided. To the maximum extent permitted by law, authors
 > and contributors accept no liability for its use or consequences.
 > This is not an EcoFlow release or an official rabits/ha-ef-ble release.
@@ -13,7 +13,19 @@ Bluetooth, and the station remain available. Cloud sign-in during setup is optio
 you can enter a User ID manually. No separate `ef_ble` installation or running
 parent integration is required.
 
-This build makes two changes to BLE connection recovery:
+## Changes since 0.8.0b6
+
+- Promoted the tested 0.8.0b6 code to the stable release channel.
+- Added explicit English labels and descriptions to both authentication choices,
+  so the email/password and manual User ID paths are visible before selection.
+- Documented the exact station firmware and the reported 20-hour power-off test.
+
+No telemetry parsing, entity IDs, device commands, XT60 behavior, authentication
+protocol, or vendored protocol code changed after 0.8.0b6.
+
+## BLE recovery
+
+This release retains the two BLE connection-recovery changes introduced in 0.8.0b6:
 
 - While the entry is in `SETUP_RETRY`, a new connectable advertisement matching
   its serial number and address requests one early retry through Home Assistant.
@@ -29,17 +41,21 @@ This build makes two changes to BLE connection recovery:
 Home Assistant retains responsibility for ordinary retries and connection teardown.
 The change uses its existing scanner, with no polling timer or active scan request.
 It requires the adapter or proxy to receive advertisements from the station.
-XT60 controls, authentication, device commands, sensor behavior, entity identifiers,
-translations, appearance, and the vendored protocol library are unchanged.
+XT60 controls, device commands, sensor behavior, entity identifiers, and the
+vendored protocol library are unchanged.
 
 **Verification: 34 tests passed on Home Assistant 2026.9.1 / Python 3.14.6.**
 The 20 existing tests and 14 recovery cases cover cached versus fresh discovery,
 duplicate advertisements, entry-state guards, a second outage, shutdown, and setup
 cleanup. Recovery cases use real HA Bluetooth and entry APIs with synthetic radio
-events and simulated connections. The new changes have not been tested on a real
-station; no live cloud login was performed. Earlier physical testing reported by
-the author does not validate this build's new behavior. Results are included in
-`audit/tests_0.8.0b6.txt` and `audit/checks_0.8.0b6.json`.
+events and simulated connections. No live cloud login was performed.
+
+The author reports a physical test on an **EcoFlow DELTA 2 Max with firmware
+V1.0.0.204**. After approximately 20 hours powered off, the station connected
+within 1–2 seconds after power-on without a manual integration reload, and all
+sensors worked. This single reported test does not cover every firmware,
+Bluetooth environment, feature, or configuration. Results are included in
+`audit/tests_0.8.0.txt` and `audit/checks_0.8.0.json`.
 
 The code defines up to 66 sensors; **not all are necessarily enabled in an
 installed integration**. Extra Battery 1 sensors appear after battery detection.
@@ -55,8 +71,8 @@ This project builds on their protocol implementation and device support.
 Acknowledgment does not imply their endorsement of Suris modifications.
 
 HACS uses the dedicated `suris_ef_ble_xboost.zip` asset. The full source,
-license, audit, and verification package is `suris_ef_ble_0.8.0b6.zip`.
+license, audit, and verification package is `suris_ef_ble_0.8.0.zip`.
 Installation instructions are in the
 [README](https://github.com/Suris2009/suris-ef-ble#installation-and-update).
 
-**Unofficial / unstable beta. Use with caution and at your own risk.**
+**Unofficial integration. Use with caution and at your own risk.**

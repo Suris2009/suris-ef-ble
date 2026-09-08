@@ -1,4 +1,4 @@
-name: Publish unofficial beta prerelease
+name: Publish stable release
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: publish-beta-release
+  group: publish-stable-release
   cancel-in-progress: false
 
 jobs:
@@ -17,117 +17,33 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - name: Prepare version 0.8.0b6 metadata
+      - name: Verify version 0.8.0 metadata
         run: |
           python3 - <<'PY'
           import json
           from pathlib import Path
 
-          version = "0.8.0b6"
-          previous = "0.8.0b5"
           component = Path("custom_components/suris_ef_ble_xboost")
-
-          manifest_path = component / "manifest.json"
-          manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-          if manifest["version"] not in {previous, version}:
-              raise SystemExit(f"Unexpected current version: {manifest['version']}")
-          manifest["version"] = version
-          manifest_path.write_text(
-              json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
-              encoding="utf-8",
-          )
-
-          hacs = {
-              "name": "Suris EcoFlow BLE — 100% Local BLE (Unofficial Beta)",
-              "homeassistant": "2026.8.0",
-              "render_readme": True,
-              "hide_default_branch": True,
-              "zip_release": True,
-              "filename": "suris_ef_ble_xboost.zip",
-          }
-          Path("hacs.json").write_text(
-              json.dumps(hacs, ensure_ascii=False, indent=2) + "\n",
-              encoding="utf-8",
-          )
-
-          readme_path = Path("README.md")
-          readme = readme_path.read_text(encoding="utf-8").replace(previous, version)
-          heading = "### HACS installation (recommended)"
-          if heading not in readme:
-              marker = "not guarantee preservation of equipment, settings, or data.\n"
-              if marker not in readme:
-                  raise SystemExit("README installation marker was not found")
-              instructions = f"""
-
-          {heading}
-
-          Until this repository is accepted into the default HACS catalogue, add it
-          as a custom repository:
-
-          1. In HACS, open the top-right menu and select **Custom repositories**.
-          2. Add `https://github.com/Suris2009/suris-ef-ble` with category **Integration**.
-          3. Open the repository, select **Download**, expand **Need a different version?**,
-             and select `v{version}`, which is marked as a pre-release.
-          4. Restart Home Assistant before configuring or testing the integration.
-
-          HACS downloads the dedicated `suris_ef_ble_xboost.zip` asset. Integration
-          files are stored directly at the archive root so HACS installs them into
-          `/config/custom_components/suris_ef_ble_xboost` without nested directories.
-
-          ### Manual installation
-          """
-              readme = readme.replace(marker, marker + instructions, 1)
-          readme_path.write_text(readme, encoding="utf-8")
-          (component / "README.md").write_text(readme, encoding="utf-8")
-
-          notes_path = Path("RELEASE_NOTES.md")
-          notes = notes_path.read_text(encoding="utf-8").replace(previous, version)
-          old_download = (
-              f"Download `suris_ef_ble_{version}.zip` below. Installation instructions are in the\n"
-              "[README](https://github.com/Suris2009/suris-ef-ble#installation-and-update).\n"
-          )
-          new_download = (
-              "HACS uses the dedicated `suris_ef_ble_xboost.zip` asset. The full source,\n"
-              f"license, audit, and verification package is `suris_ef_ble_{version}.zip`.\n"
-              "Installation instructions are in the\n"
-              "[README](https://github.com/Suris2009/suris-ef-ble#installation-and-update).\n"
-          )
-          notes = notes.replace(old_download, new_download)
-          notes_path.write_text(notes, encoding="utf-8")
-
-          tests_path = Path("verification/test_integration.py")
-          tests = tests_path.read_text(encoding="utf-8")
-          tests = tests.replace(
-              "integration.version == '0.8.0b5'",
-              "integration.version == '0.8.0b6'",
-          )
-          tests_path.write_text(tests, encoding="utf-8")
+          manifest = json.loads((component / "manifest.json").read_text(encoding="utf-8"))
+          if manifest["version"] != "0.8.0":
+              raise SystemExit(f"Unexpected version: {manifest['version']}")
+          expected_name = "Suris EcoFlow BLE — 100% Local BLE (Unofficial)"
+          if manifest["name"] != expected_name:
+              raise SystemExit(f"Unexpected integration name: {manifest['name']}")
+          hacs = json.loads(Path("hacs.json").read_text(encoding="utf-8"))
+          if hacs["name"] != expected_name:
+              raise SystemExit(f"Unexpected HACS name: {hacs['name']}")
           PY
 
-      - name: Validate changed files
+      - name: Validate release files
         run: |
           python3 -m json.tool hacs.json >/dev/null
           python3 -m json.tool custom_components/suris_ef_ble_xboost/manifest.json >/dev/null
+          python3 -m json.tool custom_components/suris_ef_ble_xboost/strings.json >/dev/null
+          python3 -m json.tool custom_components/suris_ef_ble_xboost/translations/en.json >/dev/null
+          python3 -m json.tool custom_components/suris_ef_ble_xboost/translations/uk.json >/dev/null
           python3 -m compileall -q custom_components/suris_ef_ble_xboost
           git diff --check
-
-      - name: Commit release metadata
-        run: |
-          if git diff --quiet; then
-            echo "Release metadata is already current."
-          else
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add \
-              hacs.json \
-              README.md \
-              RELEASE_NOTES.md \
-              custom_components/suris_ef_ble_xboost/README.md \
-              custom_components/suris_ef_ble_xboost/manifest.json \
-              verification/test_integration.py
-            git commit -m "Release 0.8.0b6 with BLE rediscovery recovery"
-            git push origin HEAD:main
-          fi
 
       - name: Build source archive with license notices
         run: python3 scripts/build_release.py
@@ -137,10 +53,9 @@ jobs:
         run: |
           set -euo pipefail
           cd custom_components/suris_ef_ble_xboost
-          zip -r "$GITHUB_WORKSPACE/dist/suris_ef_ble_xboost.zip" . \
-            -x "*/__pycache__/*" "*.pyc" "*.pyo"
-          cd "$GITHUB_WORKSPACE"
-          sha256sum dist/suris_ef_ble_xboost.zip > dist/suris_ef_ble_xboost.zip.sha256
+          zip -r "$GITHUB_WORKSPACE/dist/suris_ef_ble_xboost.zip" . -x "__pycache__/" "__pycache__/*" "*/__pycache__/" "*/__pycache__/*" "*.pyc" "*.pyo"
+          cd "$GITHUB_WORKSPACE/dist"
+          sha256sum suris_ef_ble_xboost.zip > suris_ef_ble_xboost.zip.sha256
 
       - name: Verify HACS archive layout
         run: |
@@ -167,10 +82,11 @@ jobs:
           print(f"Verified HACS archive with {len(names)} entries")
           PY
 
-      - name: Publish as prerelease only
+      - name: Publish stable release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          set -euo pipefail
           VERSION=$(python3 -c 'import json; print(json.load(open("custom_components/suris_ef_ble_xboost/manifest.json"))["version"])')
           TAG="v${VERSION}"
           TARGET_SHA=$(git rev-parse HEAD)
@@ -183,15 +99,14 @@ jobs:
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" "${ASSETS[@]}" --clobber
             gh release edit "$TAG" \
-              --title "Suris EcoFlow BLE ${VERSION} — 100% local BLE / No internet required — UNOFFICIAL / UNSTABLE BETA" \
+              --title "Suris EcoFlow BLE ${VERSION} — 100% local BLE / No internet required — UNOFFICIAL" \
               --notes-file RELEASE_NOTES.md \
-              --prerelease \
-              --latest=false
+              --prerelease=false \
+              --latest
           else
             gh release create "$TAG" "${ASSETS[@]}" \
               --target "$TARGET_SHA" \
-              --title "Suris EcoFlow BLE ${VERSION} — 100% local BLE / No internet required — UNOFFICIAL / UNSTABLE BETA" \
+              --title "Suris EcoFlow BLE ${VERSION} — 100% local BLE / No internet required — UNOFFICIAL" \
               --notes-file RELEASE_NOTES.md \
-              --prerelease \
-              --latest=false
+              --latest
           fi

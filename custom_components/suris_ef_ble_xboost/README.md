@@ -1,10 +1,10 @@
-# Suris EcoFlow BLE 0.8.0b6 — 100% local BLE, no internet required
+# Suris EcoFlow BLE 0.8.0 — 100% local BLE, no internet required
 
 **100% local BLE operation. Works without internet or EcoFlow cloud.**
 
 > [!CAUTION]
-> **UNOFFICIAL / UNSTABLE BETA — USE WITH CAUTION AND AT YOUR OWN RISK.**
-> The author reports testing earlier releases on a real station. This build remains an unstable beta.
+> **UNOFFICIAL INTEGRATION — USE WITH CAUTION AND AT YOUR OWN RISK.**
+> Version 0.8.0 is the stable-channel release based on the tested 0.8.0b6 build.
 > This project is not endorsed by EcoFlow and is not an official EcoFlow BLE / ha-ef-ble release.
 > **No warranties are provided. To the maximum extent permitted by law, the authors
 > and contributors accept no liability for its use or consequences.**
@@ -25,7 +25,7 @@ Suris EcoFlow BLE provides **100% local Bluetooth monitoring and control** for
 
 The required protocol implementation is included and is based on EcoFlow BLE 1.1.1.
 Home Assistant and a working Bluetooth adapter or proxy are still required.
-Use this beta for supervised testing with noncritical loads.
+Use this integration for supervised testing with noncritical loads.
 
 ## Thanks to the EcoFlow BLE creators
 
@@ -59,7 +59,7 @@ establish that the second input is interpreted correctly on every firmware.
 
 Requires **Home Assistant Core 2026.8+** and a working Bluetooth adapter or proxy.
 
-## BLE recovery in 0.8.0b6
+## BLE recovery in 0.8.0
 
 When Home Assistant is waiting to retry setup and receives a new connectable BLE
 advertisement from the configured station, the integration requests one early
@@ -79,22 +79,24 @@ XT60 controls, device commands, authentication, sensors, and entity IDs are unch
 
 ## Testing status
 
-**The author reports testing earlier releases on a real EcoFlow DELTA 2 Max station.**
-This does not establish coverage of every feature, firmware, or configuration.
-The release remains an **unofficial, unstable beta**.
+The author reports a physical test on an **EcoFlow DELTA 2 Max running firmware
+V1.0.0.204**. After the station remained powered off for approximately 20 hours,
+version 0.8.0b6 connected within 1–2 seconds after power-on without a manual
+integration reload, and all sensors worked. Version 0.8.0 retains that BLE code.
+This single reported test does not establish coverage of every feature, firmware,
+Bluetooth environment, or configuration.
 
-Automated checks for 0.8.0b6 ran on Home Assistant Core 2026.9.1 and Python 3.14.6:
+Automated checks for 0.8.0 ran on Home Assistant Core 2026.9.1 and Python 3.14.6:
 **34 tests passed**. Recovery checks use the real Home Assistant Bluetooth manager
 and configuration-entry APIs with synthetic advertisements and simulated connection
-attempts. The new recovery behavior has not been tested on a physical station.
-No live cloud login was exercised. Results and reproducible checks are included
-under `audit/` and `verification/`.
+attempts. No live cloud login was exercised. Results and reproducible checks are
+included under `audit/` and `verification/`.
 
 ## Installation and update
 
 > [!WARNING]
 > **Use caution: create a full Home Assistant backup and keep your previous build.**
-> Supervise initial testing and use noncritical loads. Installing this beta does
+> Supervise initial testing and use noncritical loads. Installing this software does
 > not guarantee preservation of equipment, settings, or data.
 
 
@@ -106,7 +108,7 @@ as a custom repository:
 1. In HACS, open the top-right menu and select **Custom repositories**.
 2. Add `https://github.com/Suris2009/suris-ef-ble` with category **Integration**.
 3. Open the repository, select **Download**, expand **Need a different version?**,
-   and select `v0.8.0b6`, which is marked as a pre-release.
+   and select `v0.8.0`, the stable release.
 4. Restart Home Assistant before configuring or testing the integration.
 
 HACS downloads the dedicated `suris_ef_ble_xboost.zip` asset. Integration
@@ -115,14 +117,13 @@ files are stored directly at the archive root so HACS installs them into
 
 ### Manual installation
 
-1. Use the supplied `suris_ef_ble_0.8.0b6.zip`, or download it from
-   [Releases](https://github.com/Suris2009/suris-ef-ble/releases) once published.
-   This is a beta build.
+1. Use the supplied `suris_ef_ble_0.8.0.zip`, or download it from
+   [Releases](https://github.com/Suris2009/suris-ef-ble/releases).
 2. Extract the ZIP on your computer and locate `custom_components/suris_ef_ble_xboost`.
 3. Replace `/config/custom_components/suris_ef_ble_xboost` in Home Assistant with
    that complete folder. Do not merge old and new `_vendor` files. Restart Home Assistant.
 4. Open **Settings → Devices & services → Add integration** and select
-   **Suris EcoFlow BLE — 100% Local BLE (Unofficial Beta)**. Select your discovered DELTA 2 Max.
+   **Suris EcoFlow BLE — 100% Local BLE (Unofficial)**. Select your discovered DELTA 2 Max.
 5. Choose the EcoFlow sign-in option or manual User ID entry, using your own
    account associated with the station, and wait for BLE authentication.
 6. Check readings, then verify each command directly on the station before

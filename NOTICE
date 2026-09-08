@@ -1,6 +1,6 @@
 Suris EcoFlow BLE — 100% local BLE operation. No internet or EcoFlow cloud connection is required during operation.
 
-Suris EcoFlow BLE 0.8.0b4 — UNOFFICIAL / UNSTABLE BETA
+Suris EcoFlow BLE 0.8.0 — UNOFFICIAL INTEGRATION
 
 This distribution includes code from EcoFlow BLE (ha-ef-ble),
 created and maintained by rabits and the ha-ef-ble contributors.
@@ -32,6 +32,6 @@ EcoFlow, DELTA, Bluetooth, and other names/marks belong to their respective
 owners. Names are used to identify compatibility and acknowledge origin.
 No trademark rights or manufacturer approval are granted by this release.
 
-UNSTABLE BETA: use cautiously and at your own risk. No warranties are given.
+UNOFFICIAL SOFTWARE: use cautiously and at your own risk. No warranties are given.
 To the maximum extent permitted by applicable law, the authors and
 contributors accept no liability. See DISCLAIMER.md and LICENSE.

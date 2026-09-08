@@ -84,7 +84,15 @@ class SurisEcoFlowBleXBoostConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(step_id="user", data_schema=schema, errors=errors)
 
     async def async_step_auth(self, user_input=None):
-        return self.async_show_menu(step_id="auth", menu_options=["login", "user_id"])
+        # Keep labels in the flow result as well as translations so they remain
+        # visible even if the frontend has not loaded custom translations yet.
+        return self.async_show_menu(
+            step_id="auth",
+            menu_options={
+                "login": "Log in with EcoFlow email and password",
+                "user_id": "Enter EcoFlow User ID manually",
+            },
+        )
 
     async def async_step_reauth(self, entry_data):
         self._reauth_entry = self._get_reauth_entry()

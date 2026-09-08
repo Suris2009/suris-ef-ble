@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: Apache-2.0
-"""Build the beta source/install ZIP with notices and per-file checksums."""
+"""Build the source release ZIP with notices and per-file checksums."""
 
 import argparse
 import hashlib
@@ -25,8 +25,8 @@ def main():
     args = parser.parse_args()
     component = ROOT / 'custom_components/suris_ef_ble_xboost'
     version = json.loads((component / 'manifest.json').read_text())['version']
-    if not re.fullmatch(r'\d+\.\d+\.\d+b\d+', version):
-        raise SystemExit('This project release workflow only accepts beta versions.')
+    if not re.fullmatch(r'\d+\.\d+\.\d+(?:b\d+)?', version):
+        raise SystemExit('Unsupported release version format.')
     for name in ['LICENSE', 'NOTICE', 'DISCLAIMER.md', 'UPSTREAM_NOTICE.md', 'THIRD_PARTY_NOTICES.md']:
         if (ROOT / name).read_bytes() != (component / name).read_bytes():
             raise SystemExit(f'Missing or inconsistent installed notice: {name}')
