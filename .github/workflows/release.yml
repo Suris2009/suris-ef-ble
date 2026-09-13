@@ -1,13 +1,18 @@
-name: Publish stable release
+name: Publish beta release
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - custom_components/suris_ef_ble_xboost/manifest.json
 
 permissions:
   contents: write
 
 concurrency:
-  group: publish-stable-release
+  group: publish-beta-release
   cancel-in-progress: false
 
 jobs:
@@ -17,7 +22,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - name: Verify version 0.8.0 metadata
+      - name: Verify version 0.8.1b1 metadata
         run: |
           python3 - <<'PY'
           import json
@@ -25,7 +30,7 @@ jobs:
 
           component = Path("custom_components/suris_ef_ble_xboost")
           manifest = json.loads((component / "manifest.json").read_text(encoding="utf-8"))
-          if manifest["version"] != "0.8.0":
+          if manifest["version"] != "0.8.1b1":
               raise SystemExit(f"Unexpected version: {manifest['version']}")
           expected_name = "Suris EcoFlow BLE — 100% Local BLE (Unofficial)"
           if manifest["name"] != expected_name:
@@ -82,7 +87,7 @@ jobs:
           print(f"Verified HACS archive with {len(names)} entries")
           PY
 
-      - name: Publish stable release
+      - name: Publish beta release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -99,14 +104,13 @@ jobs:
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" "${ASSETS[@]}" --clobber
             gh release edit "$TAG" \
-              --title "Suris EcoFlow BLE ${VERSION} — 100% local BLE / No internet required — UNOFFICIAL" \
+              --title "Suris EcoFlow BLE ${VERSION} — 100% local BLE / No internet required — UNOFFICIAL BETA" \
               --notes-file RELEASE_NOTES.md \
-              --prerelease=false \
-              --latest
+              --prerelease
           else
             gh release create "$TAG" "${ASSETS[@]}" \
               --target "$TARGET_SHA" \
-              --title "Suris EcoFlow BLE ${VERSION} — 100% local BLE / No internet required — UNOFFICIAL" \
+              --title "Suris EcoFlow BLE ${VERSION} — 100% local BLE / No internet required — UNOFFICIAL BETA" \
               --notes-file RELEASE_NOTES.md \
-              --latest
+              --prerelease
           fi

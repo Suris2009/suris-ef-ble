@@ -1,0 +1,35 @@
+{
+  "build": "0.8.1b1",
+  "date": "2026-09-13",
+  "base_version": "0.8.0",
+  "release_channel": "beta",
+  "tests": {
+    "passed": 35,
+    "warnings": 5,
+    "homeassistant": "2026.9.1",
+    "python": "3.14.7",
+    "radio_events": "synthetic",
+    "connections_and_cloud_login": "simulated",
+    "result_file": "audit/tests_0.8.1b1.txt"
+  },
+  "author_reported_physical_test": {
+    "tested": true,
+    "scope": "BLE recovery retained from 0.8.0",
+    "model": "EcoFlow DELTA 2 Max",
+    "firmware": "V1.0.0.204",
+    "powered": "approximately 20 hours powered off",
+    "connection_after_power_on": "1–2 seconds",
+    "manual_integration_reload": false,
+    "all_sensors_worked": true
+  },
+  "ac_charging_control": {
+    "physical_station_tested": false,
+    "range_watts": [200, 2400],
+    "step_watts": 100,
+    "below_200_unlock_available": false,
+    "pause_resume_packets_tested": true
+  },
+  "ble_recovery_logic_changed_since_0.8.0": false,
+  "existing_entity_ids_changed": false,
+  "live_cloud_login_tested": false
+}

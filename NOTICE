@@ -1,6 +1,6 @@
 Suris EcoFlow BLE — 100% local BLE operation. No internet or EcoFlow cloud connection is required during operation.
 
-Suris EcoFlow BLE 0.8.0 — UNOFFICIAL INTEGRATION
+Suris EcoFlow BLE 0.8.1b1 — UNOFFICIAL BETA INTEGRATION
 
 This distribution includes code from EcoFlow BLE (ha-ef-ble),
 created and maintained by rabits and the ha-ef-ble contributors.
@@ -13,6 +13,10 @@ Thank you to rabits, GnoX, and all EcoFlow BLE contributors for the
 Bluetooth protocol implementation, device support, and maintenance.
 The v1.1.1 release specifically credits GnoX for connection/authentication work:
 https://github.com/rabits/ha-ef-ble/releases/tag/v1.1.1
+The DELTA 2 Max AC charging pause command is backported from ha-ef-ble v1.1.2,
+PR #475 by GnoX:
+https://github.com/rabits/ha-ef-ble/releases/tag/v1.1.2
+https://github.com/rabits/ha-ef-ble/pull/475
 
 Suris-specific additions and modifications: Suris2009 and Suris contributors,
 2026. Suris does not claim sole authorship of the inherited protocol library.
@@ -28,6 +32,8 @@ This NOTICE was added by Suris and does not change the Apache-2.0 terms.
 
 This project is independently maintained. It is not an official release of
 EcoFlow or of rabits/ha-ef-ble and is not endorsed by either project/company.
+It is developed exclusively for the author's own Home Assistant installation
+and EcoFlow equipment and is published as-is for transparency and reference.
 EcoFlow, DELTA, Bluetooth, and other names/marks belong to their respective
 owners. Names are used to identify compatibility and acknowledge origin.
 No trademark rights or manufacturer approval are granted by this release.

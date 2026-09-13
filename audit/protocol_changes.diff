@@ -8,7 +8,7 @@
 +# Changes: Restrict imports to DELTA 2 Max; retain device-first import order.
 +# Release 0.8.0b4 adds this notice only; executable code is unchanged.
 +"""EcoFlow BLE 1.1.1. Suris modification: import only the D2M backend."""
- 
+
 -from typing import TYPE_CHECKING, TypeGuard
 -
 -from bleak.backends.device import BLEDevice
@@ -111,7 +111,7 @@
  import functools
 @@ -263,7 +268,7 @@
          self._auth_header_dst = auth_header_dst
- 
+
          self._tasks: set[asyncio.Task] = set()
 -        self._call_later_handles: dict[str, asyncio.TimerHandle] = {}
 +        self._call_later_handles: dict[object, asyncio.TimerHandle] = {}
@@ -119,20 +119,20 @@
          self._inbox: asyncio.Queue[bytes | None] | None = None
          self._data_pump: asyncio.Task | None = None
 @@ -577,7 +582,9 @@
- 
+
          self._reconnect_attempt = 0
          await self._stop_data_pump()
 -        self._cancel_tasks()
 +        # Suris modification: complete cancellation before releasing the BLE session.
 +        # Exclude the calling task if a shutdown originates inside backend work.
 +        await self._cancel_tasks()
- 
+
          if self._client is not None and self._client.is_connected:
              self._set_state(ConnectionState.DISCONNECTING, reason=reason)
 @@ -1501,10 +1508,13 @@
      ) -> None:
          self._set_state(state, exc)
- 
+
 -    def _cancel_tasks(self):
 -        for task in self._tasks:
 +    async def _cancel_tasks(self):
@@ -143,19 +143,19 @@
 +        if tasks:
 +            await asyncio.gather(*tasks, return_exceptions=True)
 +        self._tasks.difference_update(tasks)
- 
+
          for handle in self._call_later_handles.values():
              handle.cancel()
 @@ -1553,9 +1563,9 @@
                  return
              callback()
- 
+
 +        # Suris modification: unnamed timers also belong to this connection.
          if key is None:
 -            asyncio.get_running_loop().call_later(delay, _call_if_connected)
 -            return
 +            key = object()
- 
+
          if (h := self._call_later_handles.get(key)) is not None:
              h.cancel()
 --- a/custom_components/ef_ble/eflib/devicebase.py
@@ -230,6 +230,69 @@
              battery_dict = battery_entity_map[i]
              available = kit.avai_flag
              self.set_value(battery_dict["enabled"], bool(available))
+--- a/custom_components/ef_ble/eflib/devices/delta2_max.py
++++ b/custom_components/suris_ef_ble_xboost/_vendor/eflib/devices/delta2_max.py
+@@ -1,8 +1,12 @@
++# SPDX-License-Identifier: Apache-2.0
++# Derived from rabits/ha-ef-ble v1.1.1; upstream authorship is retained.
++# AC charging pause backported from ha-ef-ble v1.1.2, PR #475 by GnoX.
++# Suris adjustment: fixed 200-2400 W range and 100 W step, with no unlock option.
+ from ..entity import controls
+ from ..entity.base import dynamic
+ from ..model import Mr350MpptHeart, Mr350PdHeartbeatDelta2Max
+ from ..packet import Packet
+-from ..props import computed_field, dataclass_attr_mapper, raw_field
++from ..props import dataclass_attr_mapper, raw_field
+ from ._delta2_base import Delta2Base, pb_inv
+
+ pb_pd = dataclass_attr_mapper(Mr350PdHeartbeatDelta2Max)
+@@ -17,7 +21,7 @@
+
+     ac_input_power = raw_field(pb_inv.input_watts)
+     ac_charging_speed = raw_field(pb_inv.cfg_slow_chg_watts)
+-    ac_chg_rated_power = raw_field(pb_inv.ac_chg_rated_power)
++    ac_charging = raw_field(pb_inv.cfg_pause_flag, lambda x: x == 0)
+     dc_output_power = raw_field(pb_pd.car_watts)
+     energy_backup = raw_field(pb_pd.watthisconfig, lambda x: x == 1)
+     energy_backup_battery_level = raw_field(pb_pd.bp_power_soc)
+@@ -25,10 +29,6 @@
+     xt60_1_input_power = raw_field(pb_pd.pv1_charge_watts)
+     xt60_2_input_power = raw_field(pb_pd.pv2_charge_watts)
+
+-    @computed_field
+-    def max_ac_charging_power(self) -> int:
+-        return self.ac_chg_rated_power or 1800
+-
+     @property
+     def pd_heart_type(self):
+         return Mr350PdHeartbeatDelta2Max
+@@ -72,7 +72,12 @@
+             raise_on_failure=True,
+         )
+
+-    @controls.power(ac_charging_speed, min=1, max=dynamic(max_ac_charging_power))
++    @controls.power(
++        ac_charging_speed,
++        min=200,
++        max=2400,
++        step=100,
++    )
+     async def set_ac_charging_speed(self, value: float):
+         payload = bytes([0xFF, 0xFF]) + int(value).to_bytes(2, "little") + bytes([0xFF])
+         await self.send_packet(
+@@ -80,3 +85,12 @@
+             raise_on_failure=True,
+         )
+         return True
++
++    @controls.switch(ac_charging)
++    async def enable_ac_charging(self, enabled: bool):
++        """Pause or resume AC charging without changing the configured wattage."""
++        payload = bytes([0xFF, 0xFF, 0xFF, 0xFF, 0 if enabled else 1])
++        await self.send_packet(
++            Packet(0x20, 0x04, 0x20, 0x45, payload, version=0x02),
++            raise_on_failure=True,
++        )
 --- a/custom_components/ef_ble/eflib/listeners.py
 +++ b/custom_components/suris_ef_ble_xboost/_vendor/eflib/listeners.py
 @@ -1,3 +1,8 @@
@@ -243,18 +306,18 @@
  from inspect import get_annotations
 @@ -51,7 +56,9 @@
          self.append(object)
- 
+
          def _unlisten():
 -            self.remove(object)
 +            # Suris modification: teardown can be called more than once by HA.
 +            if object in self:
 +                self.remove(object)
- 
+
          return _unlisten
- 
+
 @@ -63,5 +70,6 @@
      else:
- 
+
          def __call__(self, *args, **kwargs):
 -            for listener in self:
 +            # Suris modification: callbacks may subscribe/unsubscribe while notifying.

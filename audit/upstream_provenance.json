@@ -9,7 +9,13 @@
   "license_sha256": "b8a5ad153a7153e713c20537d64adfb737b31c026553678fddd917d295d0a6ac",
   "standalone_upstream_notice_found": false,
   "all_recorded_upstream_file_hashes_confirmed": true,
+  "focused_backport": {
+    "upstream_release": "v1.1.2",
+    "pull_request": "https://github.com/rabits/ha-ef-ble/pull/475",
+    "author": "GnoX",
+    "feature": "DELTA 2 Max AC charging pause control"
+  },
   "bundled_python_files": 40,
-  "unchanged_files": 34,
-  "modified_files": 6
+  "unchanged_files": 33,
+  "modified_files": 7
 }

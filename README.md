@@ -1,14 +1,18 @@
-# Suris EcoFlow BLE 0.8.0 — 100% local BLE, no internet required
+# Suris EcoFlow BLE 0.8.1b1 — 100% local BLE, no internet required
 
 **100% local BLE operation. Works without internet or EcoFlow cloud.**
 
 > [!CAUTION]
 > **UNOFFICIAL INTEGRATION — USE WITH CAUTION AND AT YOUR OWN RISK.**
-> Version 0.8.0 is the stable-channel release based on the tested 0.8.0b6 build.
+> Version 0.8.1b1 is an unstable beta based on the tested 0.8.0 release.
 > This project is not endorsed by EcoFlow and is not an official EcoFlow BLE / ha-ef-ble release.
 > **No warranties are provided. To the maximum extent permitted by law, the authors
 > and contributors accept no liability for its use or consequences.**
 > Read the [full disclaimer](DISCLAIMER.md) before installation.
+
+This project is developed exclusively for the author's own Home Assistant
+installation and EcoFlow equipment. It is published as-is for transparency and
+reference, without any promise of support or compatibility with other installations.
 
 ## 100% local operation — no internet or EcoFlow cloud required
 
@@ -23,7 +27,8 @@ Suris EcoFlow BLE provides **100% local Bluetooth monitoring and control** for
 - **Cloud sign-in is optional during setup:** provide your User ID manually for BLE
   authentication, or use email/password sign-in to obtain it from EcoFlow.
 
-The required protocol implementation is included and is based on EcoFlow BLE 1.1.1.
+The required protocol implementation is included and is based on EcoFlow BLE 1.1.1,
+with the DELTA 2 Max AC charging pause command backported from EcoFlow BLE 1.1.2.
 Home Assistant and a working Bluetooth adapter or proxy are still required.
 Use this integration for supervised testing with noncritical loads.
 
@@ -33,7 +38,9 @@ Use this integration for supervised testing with noncritical loads.
 [EcoFlow BLE / ha-ef-ble](https://github.com/rabits/ha-ef-ble)** for the Bluetooth
 protocol implementation, device support, and continued development.
 Special thanks to **[GnoX](https://github.com/GnoX)** for the connection and
-authentication work credited in the [1.1.1 release](https://github.com/rabits/ha-ef-ble/releases/tag/v1.1.1).
+authentication work credited in the [1.1.1 release](https://github.com/rabits/ha-ef-ble/releases/tag/v1.1.1)
+and the AC charging pause control included in the
+[1.1.2 release](https://github.com/rabits/ha-ef-ble/releases/tag/v1.1.2).
 This integration would not be possible without their work. Suris does not claim
 authorship of the upstream library; Suris modifications are maintained separately.
 These acknowledgments do not imply endorsement of this project.
@@ -42,24 +49,28 @@ These acknowledgments do not imply endorsement of this project.
 
 | Device | Entities defined in code |
 | --- | --- |
-| DELTA 2 Max | 37 sensors, 5 switches, 4 number controls, 2 input-current selectors |
+| DELTA 2 Max | 37 sensors, 6 switches, 4 number controls, 2 input-current selectors |
 | Extra Battery 1 | 29 sensors, created after battery detection |
 | Extra Battery 2 and other models | Not supported by this build |
 
-The code defines up to 66 sensors. **This does not mean that all 66 are enabled
-in an installed integration.** Some entities may be disabled in Home Assistant.
+The code defines up to 66 sensors and creates them enabled by default.
 Extra Battery 1 sensors appear after its data is detected. Readings can remain
 unknown or unavailable until the station sends the corresponding data.
 Power difference is calculated as **Output minus Input**. The update preserves
-the integration domain, unique IDs, entity inventory, and existing command logic.
+the integration domain and all existing unique IDs while adding one new switch.
 
 **Car Input 2 remains experimental.** Both current selectors require fresh,
 valid limits for both inputs before sending a command. This check does not
 establish that the second input is interpreted correctly on every firmware.
 
+**AC Charging Speed** is a slider from **200 W to 2400 W** in **100 W steps**,
+matching the range shown in the EcoFlow app for the author's DELTA 2 Max. Values
+below 200 W and values between 100 W steps are rejected. The **AC Charging**
+switch pauses or resumes grid charging without changing the configured power.
+
 Requires **Home Assistant Core 2026.8+** and a working Bluetooth adapter or proxy.
 
-## BLE recovery in 0.8.0
+## BLE recovery retained from 0.8.0
 
 When Home Assistant is waiting to retry setup and receives a new connectable BLE
 advertisement from the configured station, the integration requests one early
@@ -75,19 +86,20 @@ The Bluetooth adapter or proxy must be receiving the station's advertisements.
 
 Failed BLE connections also skip platform unloading when platform setup has not
 started. This avoids the misleading `Config entry was never loaded!` cleanup errors.
-XT60 controls, device commands, authentication, sensors, and entity IDs are unchanged.
+Existing XT60 controls, commands, authentication, sensors, and entity IDs are unchanged.
 
 ## Testing status
 
 The author reports a physical test on an **EcoFlow DELTA 2 Max running firmware
 V1.0.0.204**. After the station remained powered off for approximately 20 hours,
 version 0.8.0b6 connected within 1–2 seconds after power-on without a manual
-integration reload, and all sensors worked. Version 0.8.0 retains that BLE code.
+integration reload, and all sensors worked. Version 0.8.1b1 retains that BLE code.
+The new AC charging controls have not yet been physically verified on the station.
 This single reported test does not establish coverage of every feature, firmware,
 Bluetooth environment, or configuration.
 
-Automated checks for 0.8.0 ran on Home Assistant Core 2026.9.1 and Python 3.14.6:
-**34 tests passed**. Recovery checks use the real Home Assistant Bluetooth manager
+Automated checks for 0.8.1b1 ran on Home Assistant Core 2026.9.1 and Python 3.14.7:
+**35 tests passed**. Recovery checks use the real Home Assistant Bluetooth manager
 and configuration-entry APIs with synthetic advertisements and simulated connection
 attempts. No live cloud login was exercised. Results and reproducible checks are
 included under `audit/` and `verification/`.
@@ -108,7 +120,7 @@ as a custom repository:
 1. In HACS, open the top-right menu and select **Custom repositories**.
 2. Add `https://github.com/Suris2009/suris-ef-ble` with category **Integration**.
 3. Open the repository, select **Download**, expand **Need a different version?**,
-   and select `v0.8.0`, the stable release.
+   and select `v0.8.1b1`, the beta release.
 4. Restart Home Assistant before configuring or testing the integration.
 
 HACS downloads the dedicated `suris_ef_ble_xboost.zip` asset. Integration
@@ -117,7 +129,7 @@ files are stored directly at the archive root so HACS installs them into
 
 ### Manual installation
 
-1. Use the supplied `suris_ef_ble_0.8.0.zip`, or download it from
+1. Use the supplied `suris_ef_ble_0.8.1b1.zip`, or download it from
    [Releases](https://github.com/Suris2009/suris-ef-ble/releases).
 2. Extract the ZIP on your computer and locate `custom_components/suris_ef_ble_xboost`.
 3. Replace `/config/custom_components/suris_ef_ble_xboost` in Home Assistant with
@@ -152,12 +164,12 @@ connection, readings, and commands. If behavior is unexpected, stop testing and
 disable the integration in **Settings → Devices & services**. To roll back,
 restore your previous component folder and, if needed, your Home Assistant backup.
 
-## Credentials and use by other owners
+## Personal project and credentials
 
-**Other DELTA 2 Max owners can use this integration.** No personal passwords,
-User ID, or station identifiers belonging to the author were found in the code.
-Each user selects their own station and provides their own account details.
-The compatibility restriction concerns the device model and battery slot.
+This project is developed exclusively for the author's own setup. Anyone choosing
+to evaluate the published code must use their own station and account details and
+accept that support and compatibility are not promised. No personal passwords,
+User ID, or station identifiers belonging to the author are included in the code.
 
 Email/password sign-in contacts the EcoFlow API over HTTPS to obtain a User ID.
 The integration does not retain the email and password in its configuration entry.

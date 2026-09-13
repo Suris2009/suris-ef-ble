@@ -734,6 +734,7 @@
     "dc_12v_port": "DC 12V Port",
     "usb_ports": "USB Ports",
     "energy_backup": "Backup Reserve",
+    "ac_charging": "AC Charging",
     "xboost": "X-Boost"
   },
   "numbers": {

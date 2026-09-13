@@ -1,29 +1,33 @@
 {
-  "python": "3.14.6",
+  "python": "3.14.7",
   "homeassistant": "2026.9.1",
-  "compiled_python_files": 52,
+  "compiled_python_files": 53,
   "vendored_python_files": 40,
-  "vendored_byte_identical_files": 34,
+  "vendored_byte_identical_files": 33,
   "vendored_modified_files": {
     "__init__.py": "D2M-only imports; retain upstream device-first import order.",
     "devices/__init__.py": "Disable automatic imports of unrelated device models.",
     "connection.py": "Await cancelled connection tasks and track unnamed timers during teardown.",
     "devicebase.py": "Require at least 23 advertisement bytes before accessing byte 22.",
     "devices/_delta2_base.py": "Limit extra-battery kit metadata to the first slot.",
+    "devices/delta2_max.py": "Backport AC charging pause and set a fixed 200-2400 W range in 100 W steps.",
     "listeners.py": "Idempotent unsubscribe and snapshot iteration during notification."
   },
-  "device_class_methods_AST_identical": 74,
+  "device_class_methods_AST_identical": 72,
   "device_class_method_changes": [
     "devicebase.py:_ScanRecordV2.from_manufacturer_data",
-    "devices/_delta2_base.py:Delta2Base._update_extra_batteries"
+    "devices/_delta2_base.py:Delta2Base._update_extra_batteries",
+    "devices/delta2_max.py:Device.max_ac_charging_power removed",
+    "devices/delta2_max.py:Device.set_ac_charging_speed",
+    "devices/delta2_max.py:Device.enable_ac_charging added"
   ],
   "external_ef_ble_imports": [],
   "main": {
     "sensor": 37,
-    "switch": 5,
+    "switch": 6,
     "number": 4,
     "select": 2,
-    "total": 48
+    "total": 49
   },
   "extra_battery_1": {
     "sensor": 29,
@@ -33,6 +37,7 @@
   "upstream_main_sensor_coverage": "29/29",
   "upstream_battery_1_sensor_coverage": "5/5",
   "decoded_battery_1_field_coverage": "28/28",
-  "offline_tests_passed": 20,
-  "hardware_or_live_cloud_tested": false
+  "offline_tests_passed": 35,
+  "hardware_tested": "Retained BLE recovery behavior; AC charging controls not yet physically tested.",
+  "live_cloud_tested": false
 }

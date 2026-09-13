@@ -2,7 +2,7 @@
 # Suris additions/adaptations, 2026. See NOTICE for upstream attribution.
 # This is an independently modified, unofficial integration.
 """Upstream decorated number controls, retaining dynamic limits and commands."""
-from homeassistant.components.number import NumberDeviceClass, NumberEntity
+from homeassistant.components.number import NumberDeviceClass, NumberEntity, NumberMode
 from homeassistant.exceptions import HomeAssistantError
 
 from ._vendor.eflib.entity import controls
@@ -25,6 +25,8 @@ class SurisNumber(SurisEntity, NumberEntity):
         self._attr_native_unit_of_measurement = "W" if isinstance(control, controls.power) else "%"
         if isinstance(control, controls.power):
             self._attr_device_class = NumberDeviceClass.POWER
+        if control.key == "ac_charging_speed":
+            self._attr_mode = NumberMode.SLIDER
 
     def _limit(self, limit, fallback):
         value = limit.resolve(self._device) if isinstance(limit, DynamicValue) else limit
@@ -53,4 +55,6 @@ class SurisNumber(SurisEntity, NumberEntity):
             raise HomeAssistantError("Delta 2 Max control is unavailable")
         if not self.native_min_value <= value <= self.native_max_value:
             raise HomeAssistantError("Value is outside the current device limits")
+        if self.key == "ac_charging_speed" and value % self.native_step:
+            raise HomeAssistantError("AC charging power must use 100 W steps")
         await self.control.set_value_func(self._device, value)

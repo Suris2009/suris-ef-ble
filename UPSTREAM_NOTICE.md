@@ -2,10 +2,11 @@
 
 **Suris EcoFlow BLE: 100% local BLE operation. No internet or EcoFlow cloud connection is required during operation.**
 
-Suris EcoFlow BLE 0.8.0b4 is an **unofficial, unstable beta**. It bundles the
+Suris EcoFlow BLE 0.8.1b1 is an **unofficial, unstable beta**. It bundles the
 DELTA 2 Max dependency closure of [EcoFlow BLE / ha-ef-ble](https://github.com/rabits/ha-ef-ble)
 by **rabits and the ha-ef-ble contributors**, under Apache-2.0.
-Special thanks to **GnoX**, credited in the upstream v1.1.1 release.
+Special thanks to **GnoX**, credited in the upstream v1.1.1 release and author
+of the AC charging pause control backported from upstream v1.1.2 PR #475.
 
 ## Verified source
 
@@ -14,7 +15,7 @@ Special thanks to **GnoX**, credited in the upstream v1.1.1 release.
 - Original upstream path: `custom_components/ef_ble/eflib/`.
 - Local path: `custom_components/suris_ef_ble_xboost/_vendor/eflib/`.
 - Verification date: 2026-09-06. All 40 files were compared against that tag.
-- 34 files remain byte-identical; six contain the modifications listed below.
+- 33 files remain byte-identical; seven contain the modifications listed below.
 - The inherited LICENSE matches the LICENSE at that exact commit byte for byte.
 - No standalone NOTICE file was found in that upstream source tree.
 
@@ -33,10 +34,12 @@ The earlier component archive itself was not needed for this comparison.
 | `connection.py` | Await cancelled connection tasks and track unnamed timers during teardown. |
 | `devicebase.py` | Check advertisement length before accessing byte 22. |
 | `devices/_delta2_base.py` | Restrict extra-battery kit metadata to slot 1. |
+| `devices/delta2_max.py` | Backport the v1.1.2 AC charging pause control and set the charging-speed control to a fixed 200–2400 W range in 100 W steps, without the upstream lower-limit unlock option. |
 | `listeners.py` | Make unsubscribe idempotent and iterate over a listener snapshot. |
 
-Release 0.8.0b4 adds prominent file-header notices to these six files without
-changing their executable code. Each unchanged file retains its original bytes.
+The six previously modified files retain their Suris changes. Version 0.8.1b1
+additionally modifies `devices/delta2_max.py` with the focused v1.1.2 backport
+and Suris-specific range policy. Each unchanged file retains its original bytes.
 The protocol key table, encryption, authentication, packet framing, and device
 commands have not been replaced or presented as original Suris inventions.
 

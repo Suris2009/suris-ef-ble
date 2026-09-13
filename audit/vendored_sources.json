@@ -45,8 +45,8 @@
     "path": "devices/delta2_max.py",
     "upstream_commit": "ef02d81a2720de256548a5d515af814cc3244ee9",
     "upstream_sha256": "070cf93e24be17618f10448aa247c1ab616d4bfed871206fbc196a44780f9b76",
-    "suris_sha256": "070cf93e24be17618f10448aa247c1ab616d4bfed871206fbc196a44780f9b76",
-    "modified": false
+    "suris_sha256": "680684375e47366dd9035915614c0bcff040a44cbccca6e1ae739d909673b981",
+    "modified": true
   },
   {
     "path": "encpacket.py",

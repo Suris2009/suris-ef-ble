@@ -9,7 +9,13 @@ from ._vendor.eflib.entity import controls
 from ._vendor.eflib.packet import Packet
 from .entity import SurisEntity
 
-SWITCH_NAMES = {"ac_ports": "AC Ports", "dc_12v_port": "DC 12V Port", "usb_ports": "USB Ports", "energy_backup": "Backup Reserve"}
+SWITCH_NAMES = {
+    "ac_ports": "AC Ports",
+    "dc_12v_port": "DC 12V Port",
+    "usb_ports": "USB Ports",
+    "energy_backup": "Backup Reserve",
+    "ac_charging": "AC Charging",
+}
 
 
 async def async_setup_entry(hass, entry, async_add_entities):

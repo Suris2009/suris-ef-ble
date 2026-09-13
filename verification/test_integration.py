@@ -21,6 +21,7 @@ import pytest
 import pytest_asyncio
 from bleak.backends.device import BLEDevice
 from bleak.backends.scanner import AdvertisementData
+from homeassistant.components.number import NumberMode
 from homeassistant.config_entries import ConfigEntries, ConfigEntry, ConfigEntryState
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady, HomeAssistantError
@@ -32,10 +33,12 @@ from custom_components.suris_ef_ble_xboost import driver
 from custom_components.suris_ef_ble_xboost.const import DOMAIN
 from custom_components.suris_ef_ble_xboost.config_flow import SurisEcoFlowBleXBoostConfigFlow
 from custom_components.suris_ef_ble_xboost.entity import SurisEntity
+from custom_components.suris_ef_ble_xboost.number import SurisNumber
 from custom_components.suris_ef_ble_xboost.registry import async_prepare_registry, async_merge_duplicates
 from custom_components.suris_ef_ble_xboost.runtime import SurisRuntime
 from custom_components.suris_ef_ble_xboost.sensor import MAIN_SENSORS, BATTERY_SENSORS, SurisSensor
 from custom_components.suris_ef_ble_xboost.select import EcoFlowCarInputCurrentState
+from custom_components.suris_ef_ble_xboost.switch import SurisSwitch
 from custom_components.suris_ef_ble_xboost._vendor.eflib.connection import Connection, ConnectionState
 from custom_components.suris_ef_ble_xboost._vendor.eflib.devices.delta2_max import Device
 from custom_components.suris_ef_ble_xboost._vendor.eflib.devices._delta2_base import _BmsHeartbeatBattery1
@@ -116,7 +119,7 @@ async def test_inventory_matches_real_upstream(hass):
     assert {s['key'] for s in upstream['_BATTERY_ADDON_SENSORS']} <= {s.key for s in BATTERY_SENSORS}
     assert {s.field for s in BATTERY_SENSORS if s.field != 'difference'} == {f.name for f in fields(DirectBmsMDeltaHeartbeatPack)}
     assert len(MAIN_SENSORS) == 37 and len(BATTERY_SENSORS) == 29
-    assert len(runtime.device.get_controls(controls.toggle)) == 4
+    assert len(runtime.device.get_controls(controls.toggle)) == 5
     assert len(runtime.device.get_controls(controls.NumberType)) == 4
     for kind in (controls.select, controls.button, controls.climate):
         assert runtime.device.get_controls(kind) == []
@@ -268,6 +271,50 @@ async def test_bms_before_platform_setup_and_thread_callback(hass):
 
 
 @pytest.mark.asyncio
+async def test_ac_charging_slider_and_pause_switch(hass):
+    entry = await add_entry(hass)
+    runtime = SurisRuntime(hass, entry, device())
+    power_control = next(
+        control
+        for control in runtime.device.get_controls(controls.power)
+        if control.key == "ac_charging_speed"
+    )
+    number = SurisNumber(runtime, power_control)
+    assert number.native_min_value == 200
+    assert number.native_max_value == 2400
+    assert number.native_step == 100
+    assert number.mode == NumberMode.SLIDER
+
+    sent = []
+
+    async def send(packet, **kwargs):
+        sent.append(packet)
+
+    runtime.device.send_packet = send
+    with pytest.raises(HomeAssistantError):
+        await number.async_set_native_value(100)
+    with pytest.raises(HomeAssistantError):
+        await number.async_set_native_value(250)
+    await number.async_set_native_value(500)
+    assert (sent[-1].dst, sent[-1].cmd_set, sent[-1].cmd_id) == (0x04, 0x20, 0x45)
+    assert sent[-1].payload == bytes.fromhex("ff ff f4 01 ff")
+
+    switch_control = next(
+        control
+        for control in runtime.device.get_controls(controls.switch)
+        if control.key == "ac_charging"
+    )
+    switch = SurisSwitch(runtime, switch_control)
+    await switch.async_turn_off()
+    await switch.async_turn_on()
+    assert [packet.payload for packet in sent[-2:]] == [
+        bytes.fromhex("ff ff ff ff 01"),
+        bytes.fromhex("ff ff ff ff 00"),
+    ]
+    runtime.close()
+
+
+@pytest.mark.asyncio
 async def test_car_input_serializes_and_rejects_stale_limits(hass):
     entry = await add_entry(hass)
     runtime = SurisRuntime(hass, entry, device())
@@ -371,7 +418,7 @@ async def test_setup_unload_and_failed_setup_cleanup(hass):
 
 
 @pytest.mark.asyncio
-async def test_real_ha_entity_platforms_register_77_enabled_entities(hass):
+async def test_real_ha_entity_platforms_register_78_enabled_entities(hass):
     entry = await add_entry(hass)
     runtime = SurisRuntime(hass, entry, device())
     entry.runtime_data = runtime
@@ -388,11 +435,11 @@ async def test_real_ha_entity_platforms_register_77_enabled_entities(hass):
         await module.async_setup_entry(hass, entry, add_entities)
     await hass.async_block_till_done()
     entries = er.async_entries_for_config_entry(er.async_get(hass), entry.entry_id)
-    assert len(entries) == 48
+    assert len(entries) == 49
     await bms_packet(runtime.device)
     await hass.async_block_till_done()
     entries = er.async_entries_for_config_entry(er.async_get(hass), entry.entry_id)
-    assert len(entries) == 77
+    assert len(entries) == 78
     assert all(e.disabled_by is None and e.hidden_by is None for e in entries)
     extra = [e for e in entries if e.device_id == runtime.battery_device_id]
     assert len(extra) == 29
@@ -465,7 +512,7 @@ async def test_ha_loader_and_managed_initial_config_flow(hass):
     from homeassistant import loader
     loader.async_setup(hass)
     integration = await loader.async_get_integration(hass,DOMAIN)
-    assert integration.version == '0.8.0'
+    assert integration.version == '0.8.1b1'
     assert integration.dependencies == ['bluetooth']
     await integration.async_get_platform('config_flow')
     manager = hass.config_entries.flow

@@ -1,8 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+# Derived from rabits/ha-ef-ble v1.1.1; upstream authorship is retained.
+# AC charging pause backported from ha-ef-ble v1.1.2, PR #475 by GnoX.
+# Suris adjustment: fixed 200-2400 W range and 100 W step, with no unlock option.
 from ..entity import controls
 from ..entity.base import dynamic
 from ..model import Mr350MpptHeart, Mr350PdHeartbeatDelta2Max
 from ..packet import Packet
-from ..props import computed_field, dataclass_attr_mapper, raw_field
+from ..props import dataclass_attr_mapper, raw_field
 from ._delta2_base import Delta2Base, pb_inv
 
 pb_pd = dataclass_attr_mapper(Mr350PdHeartbeatDelta2Max)
@@ -17,17 +21,13 @@ class Device(Delta2Base):
 
     ac_input_power = raw_field(pb_inv.input_watts)
     ac_charging_speed = raw_field(pb_inv.cfg_slow_chg_watts)
-    ac_chg_rated_power = raw_field(pb_inv.ac_chg_rated_power)
+    ac_charging = raw_field(pb_inv.cfg_pause_flag, lambda x: x == 0)
     dc_output_power = raw_field(pb_pd.car_watts)
     energy_backup = raw_field(pb_pd.watthisconfig, lambda x: x == 1)
     energy_backup_battery_level = raw_field(pb_pd.bp_power_soc)
 
     xt60_1_input_power = raw_field(pb_pd.pv1_charge_watts)
     xt60_2_input_power = raw_field(pb_pd.pv2_charge_watts)
-
-    @computed_field
-    def max_ac_charging_power(self) -> int:
-        return self.ac_chg_rated_power or 1800
 
     @property
     def pd_heart_type(self):
@@ -72,7 +72,12 @@ class Device(Delta2Base):
             raise_on_failure=True,
         )
 
-    @controls.power(ac_charging_speed, min=1, max=dynamic(max_ac_charging_power))
+    @controls.power(
+        ac_charging_speed,
+        min=200,
+        max=2400,
+        step=100,
+    )
     async def set_ac_charging_speed(self, value: float):
         payload = bytes([0xFF, 0xFF]) + int(value).to_bytes(2, "little") + bytes([0xFF])
         await self.send_packet(
@@ -80,3 +85,12 @@ class Device(Delta2Base):
             raise_on_failure=True,
         )
         return True
+
+    @controls.switch(ac_charging)
+    async def enable_ac_charging(self, enabled: bool):
+        """Pause or resume AC charging without changing the configured wattage."""
+        payload = bytes([0xFF, 0xFF, 0xFF, 0xFF, 0 if enabled else 1])
+        await self.send_packet(
+            Packet(0x20, 0x04, 0x20, 0x45, payload, version=0x02),
+            raise_on_failure=True,
+        )
