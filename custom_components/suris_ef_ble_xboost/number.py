@@ -25,8 +25,12 @@ class SurisNumber(SurisEntity, NumberEntity):
         self._attr_native_unit_of_measurement = "W" if isinstance(control, controls.power) else "%"
         if isinstance(control, controls.power):
             self._attr_device_class = NumberDeviceClass.POWER
-        if control.key == "ac_charging_speed":
-            self._attr_mode = NumberMode.SLIDER
+        if control.key in {
+            "ac_charging_speed",
+            "battery_charge_limit_max",
+            "battery_charge_limit_min",
+        }:
+            self._attr_mode = NumberMode.BOX
 
     def _limit(self, limit, fallback):
         value = limit.resolve(self._device) if isinstance(limit, DynamicValue) else limit

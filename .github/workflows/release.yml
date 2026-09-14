@@ -22,7 +22,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - name: Verify version 0.8.1b1 metadata
+      - name: Verify version 0.8.1b2 metadata
         run: |
           python3 - <<'PY'
           import json
@@ -30,7 +30,7 @@ jobs:
 
           component = Path("custom_components/suris_ef_ble_xboost")
           manifest = json.loads((component / "manifest.json").read_text(encoding="utf-8"))
-          if manifest["version"] != "0.8.1b1":
+          if manifest["version"] != "0.8.1b2":
               raise SystemExit(f"Unexpected version: {manifest['version']}")
           expected_name = "Suris EcoFlow BLE — 100% Local BLE (Unofficial)"
           if manifest["name"] != expected_name:

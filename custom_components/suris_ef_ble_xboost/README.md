@@ -1,10 +1,10 @@
-# Suris EcoFlow BLE 0.8.1b1 — 100% local BLE, no internet required
+# Suris EcoFlow BLE 0.8.1b2 — 100% local BLE, no internet required
 
 **100% local BLE operation. Works without internet or EcoFlow cloud.**
 
 > [!CAUTION]
 > **UNOFFICIAL INTEGRATION — USE WITH CAUTION AND AT YOUR OWN RISK.**
-> Version 0.8.1b1 is an unstable beta based on the tested 0.8.0 release.
+> Version 0.8.1b2 is an unstable beta based on the tested 0.8.0 release.
 > This project is not endorsed by EcoFlow and is not an official EcoFlow BLE / ha-ef-ble release.
 > **No warranties are provided. To the maximum extent permitted by law, the authors
 > and contributors accept no liability for its use or consequences.**
@@ -57,16 +57,22 @@ The code defines up to 66 sensors and creates them enabled by default.
 Extra Battery 1 sensors appear after its data is detected. Readings can remain
 unknown or unavailable until the station sends the corresponding data.
 Power difference is calculated as **Output minus Input**. The update preserves
-the integration domain and all existing unique IDs while adding one new switch.
+the integration domain, entity names, and all existing unique IDs.
 
 **Car Input 2 remains experimental.** Both current selectors require fresh,
 valid limits for both inputs before sending a command. This check does not
 establish that the second input is interpreted correctly on every firmware.
 
-**AC Charging Speed** is a slider from **200 W to 2400 W** in **100 W steps**,
-matching the range shown in the EcoFlow app for the author's DELTA 2 Max. Values
-below 200 W and values between 100 W steps are rejected. The **AC Charging**
-switch pauses or resumes grid charging without changing the configured power.
+**AC Charging Speed** uses a numeric entry field from **200 W to 2400 W** in
+**100 W steps**, matching the range shown in the EcoFlow app for the author's
+DELTA 2 Max. Enter 200, 300, 400, and so on up to 2400. Out-of-range values and
+values between 100 W steps are rejected; they are not rounded automatically.
+The **AC Charging** switch pauses or resumes grid charging without changing
+the configured power.
+
+**Max Charge Limit** and **Min Discharge Limit** also use numeric entry fields,
+with their existing limits and 1% step. **Energy Backup Level** retains its
+existing display mode and behavior.
 
 Requires **Home Assistant Core 2026.8+** and a working Bluetooth adapter or proxy.
 
@@ -93,16 +99,21 @@ Existing XT60 controls, commands, authentication, sensors, and entity IDs are un
 The author reports a physical test on an **EcoFlow DELTA 2 Max running firmware
 V1.0.0.204**. After the station remained powered off for approximately 20 hours,
 version 0.8.0b6 connected within 1–2 seconds after power-on without a manual
-integration reload, and all sensors worked. Version 0.8.1b1 retains that BLE code.
+integration reload, and all sensors worked. Version 0.8.1b2 retains that BLE code.
 The new AC charging controls have not yet been physically verified on the station.
 This single reported test does not establish coverage of every feature, firmware,
 Bluetooth environment, or configuration.
 
-Automated checks for 0.8.1b1 ran on Home Assistant Core 2026.9.1 and Python 3.14.7:
-**35 tests passed**. Recovery checks use the real Home Assistant Bluetooth manager
-and configuration-entry APIs with synthetic advertisements and simulated connection
-attempts. No live cloud login was exercised. Results and reproducible checks are
-included under `audit/` and `verification/`.
+The recorded automated regression results are from **0.8.1b1**:
+**35 tests passed** on Home Assistant Core 2026.9.1 and Python 3.14.7. They are
+historical results, not a new test run for 0.8.1b2. The 0.8.1b2 release workflow
+validates JSON, Python syntax, license notices, and the HACS archive layout.
+The existing regression test now expects numeric entry for AC Charging Speed.
+Phone rendering has not been checked on a live Home Assistant installation.
+Recovery checks use the real Home Assistant Bluetooth manager and
+configuration-entry APIs with synthetic advertisements and simulated connection
+attempts. No live cloud login was exercised. Results and reproducible checks
+are included under `audit/` and `verification/`.
 
 ## Installation and update
 
@@ -120,7 +131,7 @@ as a custom repository:
 1. In HACS, open the top-right menu and select **Custom repositories**.
 2. Add `https://github.com/Suris2009/suris-ef-ble` with category **Integration**.
 3. Open the repository, select **Download**, expand **Need a different version?**,
-   and select `v0.8.1b1`, the beta release.
+   and select `v0.8.1b2`, the beta release.
 4. Restart Home Assistant before configuring or testing the integration.
 
 HACS downloads the dedicated `suris_ef_ble_xboost.zip` asset. Integration
@@ -129,7 +140,7 @@ files are stored directly at the archive root so HACS installs them into
 
 ### Manual installation
 
-1. Use the supplied `suris_ef_ble_0.8.1b1.zip`, or download it from
+1. Use the supplied `suris_ef_ble_0.8.1b2.zip`, or download it from
    [Releases](https://github.com/Suris2009/suris-ef-ble/releases).
 2. Extract the ZIP on your computer and locate `custom_components/suris_ef_ble_xboost`.
 3. Replace `/config/custom_components/suris_ef_ble_xboost` in Home Assistant with

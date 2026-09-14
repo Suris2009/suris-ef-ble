@@ -271,7 +271,7 @@ async def test_bms_before_platform_setup_and_thread_callback(hass):
 
 
 @pytest.mark.asyncio
-async def test_ac_charging_slider_and_pause_switch(hass):
+async def test_ac_charging_box_and_pause_switch(hass):
     entry = await add_entry(hass)
     runtime = SurisRuntime(hass, entry, device())
     power_control = next(
@@ -283,7 +283,7 @@ async def test_ac_charging_slider_and_pause_switch(hass):
     assert number.native_min_value == 200
     assert number.native_max_value == 2400
     assert number.native_step == 100
-    assert number.mode == NumberMode.SLIDER
+    assert number.mode == NumberMode.BOX
 
     sent = []
 
@@ -512,7 +512,7 @@ async def test_ha_loader_and_managed_initial_config_flow(hass):
     from homeassistant import loader
     loader.async_setup(hass)
     integration = await loader.async_get_integration(hass,DOMAIN)
-    assert integration.version == '0.8.1b1'
+    assert integration.version == '0.8.1b2'
     assert integration.dependencies == ['bluetooth']
     await integration.async_get_platform('config_flow')
     manager = hass.config_entries.flow
