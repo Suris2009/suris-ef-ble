@@ -1,10 +1,10 @@
-# Suris EcoFlow BLE 0.8.1b2 — 100% local BLE, no internet required
+# Suris EcoFlow BLE 0.8.1b3 — 100% local BLE, no internet required
 
 **100% local BLE operation. Works without internet or EcoFlow cloud.**
 
 > [!CAUTION]
 > **UNOFFICIAL INTEGRATION — USE WITH CAUTION AND AT YOUR OWN RISK.**
-> Version 0.8.1b2 is an unstable beta based on the tested 0.8.0 release.
+> Version 0.8.1b3 is an unstable beta based on the tested 0.8.0 release.
 > This project is not endorsed by EcoFlow and is not an official EcoFlow BLE / ha-ef-ble release.
 > **No warranties are provided. To the maximum extent permitted by law, the authors
 > and contributors accept no liability for its use or consequences.**
@@ -49,7 +49,7 @@ These acknowledgments do not imply endorsement of this project.
 
 | Device | Entities defined in code |
 | --- | --- |
-| DELTA 2 Max | 37 sensors, 6 switches, 4 number controls, 2 input-current selectors |
+| DELTA 2 Max | 37 sensors, 7 switches, 4 number controls, 2 input-current selectors |
 | Extra Battery 1 | 29 sensors, created after battery detection |
 | Extra Battery 2 and other models | Not supported by this build |
 
@@ -69,6 +69,12 @@ DELTA 2 Max. Enter 200, 300, 400, and so on up to 2400. Out-of-range values and
 values between 100 W steps are rejected; they are not rounded automatically.
 The **AC Charging** switch pauses or resumes grid charging without changing
 the configured power.
+The **Sound** switch controls the station beeper through the PD quiet-mode
+command. On means audible beeps; off means muted. The state is read from the
+station heartbeat and can be unknown until a heartbeat arrives. The command
+is based on the shared PD BLE protocol and has **not yet been physically
+verified on a DELTA 2 Max**. Check both directions on your station before
+depending on this switch.
 
 **Max Charge Limit** and **Min Discharge Limit** also use numeric entry fields,
 with their existing limits and 1% step. **Energy Backup Level** retains its
@@ -99,16 +105,16 @@ Existing XT60 controls, commands, authentication, sensors, and entity IDs are un
 The author reports a physical test on an **EcoFlow DELTA 2 Max running firmware
 V1.0.0.204**. After the station remained powered off for approximately 20 hours,
 version 0.8.0b6 connected within 1–2 seconds after power-on without a manual
-integration reload, and all sensors worked. Version 0.8.1b2 retains that BLE code.
+integration reload, and all sensors worked. Version 0.8.1b3 retains that BLE code.
 The new AC charging controls have not yet been physically verified on the station.
+The Sound switch and its command also await physical verification on DELTA 2 Max.
 This single reported test does not establish coverage of every feature, firmware,
 Bluetooth environment, or configuration.
 
-The recorded automated regression results are from **0.8.1b1**:
-**35 tests passed** on Home Assistant Core 2026.9.1 and Python 3.14.7. They are
-historical results, not a new test run for 0.8.1b2. The 0.8.1b2 release workflow
-validates JSON, Python syntax, license notices, and the HACS archive layout.
-The existing regression test now expects numeric entry for AC Charging Speed.
+For this 0.8.1b3 candidate, **36 tests passed** in the isolated Python 3.14.7
+environment with the pinned Home Assistant dependencies. The new test verifies
+the beeper state, command bytes, and disconnected behavior. The release workflow
+also validates JSON, Python syntax, license notices, and the HACS archive layout.
 Phone rendering has not been checked on a live Home Assistant installation.
 Recovery checks use the real Home Assistant Bluetooth manager and
 configuration-entry APIs with synthetic advertisements and simulated connection
@@ -130,8 +136,8 @@ as a custom repository:
 
 1. In HACS, open the top-right menu and select **Custom repositories**.
 2. Add `https://github.com/Suris2009/suris-ef-ble` with category **Integration**.
-3. Open the repository, select **Download**, expand **Need a different version?**,
-   and select `v0.8.1b2`, the beta release.
+3. Once `v0.8.1b3` is published, open the repository, select **Download**,
+   expand **Need a different version?**, and select that release.
 4. Restart Home Assistant before configuring or testing the integration.
 
 HACS downloads the dedicated `suris_ef_ble_xboost.zip` asset. Integration
@@ -140,7 +146,7 @@ files are stored directly at the archive root so HACS installs them into
 
 ### Manual installation
 
-1. Use the supplied `suris_ef_ble_0.8.1b2.zip`, or download it from
+1. Use the supplied `suris_ef_ble_0.8.1b3.zip`, or download it from
    [Releases](https://github.com/Suris2009/suris-ef-ble/releases).
 2. Extract the ZIP on your computer and locate `custom_components/suris_ef_ble_xboost`.
 3. Replace `/config/custom_components/suris_ef_ble_xboost` in Home Assistant with
