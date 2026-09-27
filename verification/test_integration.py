@@ -38,7 +38,7 @@ from custom_components.suris_ef_ble_xboost.registry import async_prepare_registr
 from custom_components.suris_ef_ble_xboost.runtime import SurisRuntime
 from custom_components.suris_ef_ble_xboost.sensor import MAIN_SENSORS, BATTERY_SENSORS, SurisSensor
 from custom_components.suris_ef_ble_xboost.select import EcoFlowCarInputCurrentState
-from custom_components.suris_ef_ble_xboost.switch import SurisSwitch
+from custom_components.suris_ef_ble_xboost.switch import SurisSwitch, EcoFlowSoundSwitch
 from custom_components.suris_ef_ble_xboost._vendor.eflib.connection import Connection, ConnectionState
 from custom_components.suris_ef_ble_xboost._vendor.eflib.devices.delta2_max import Device
 from custom_components.suris_ef_ble_xboost._vendor.eflib.devices._delta2_base import _BmsHeartbeatBattery1
@@ -315,6 +315,34 @@ async def test_ac_charging_box_and_pause_switch(hass):
 
 
 @pytest.mark.asyncio
+async def test_sound_switch_reads_telemetry_and_sends_inverted_pd_command(hass):
+    entry = await add_entry(hass)
+    runtime = SurisRuntime(hass, entry, device())
+    sound = EcoFlowSoundSwitch(runtime)
+    assert sound.is_on is None
+    runtime.raw["Mr350PdHeartbeatDelta2Max"] = SimpleNamespace(quiet_mode=1)
+    assert sound.is_on is False
+    runtime.raw["Mr350PdHeartbeatDelta2Max"] = SimpleNamespace(quiet_mode=0)
+    assert sound.is_on is True
+    sent = []
+
+    async def send(packet, **kwargs):
+        sent.append((packet, kwargs))
+
+    runtime.device.send_packet = send
+    await sound.async_turn_off()
+    await sound.async_turn_on()
+    assert [(p.src, p.dst, p.cmd_set, p.cmd_id, p.payload, p.version) for p, _ in sent] == [
+        (0x21, 0x02, 0x20, 0x26, b"\x01", 0x02),
+        (0x21, 0x02, 0x20, 0x26, b"\x00", 0x02),
+    ]
+    assert all(options == {"raise_on_failure": True} for _, options in sent)
+    runtime.close()
+    with pytest.raises(HomeAssistantError):
+        await sound.async_turn_off()
+
+
+@pytest.mark.asyncio
 async def test_car_input_serializes_and_rejects_stale_limits(hass):
     entry = await add_entry(hass)
     runtime = SurisRuntime(hass, entry, device())
@@ -418,7 +446,7 @@ async def test_setup_unload_and_failed_setup_cleanup(hass):
 
 
 @pytest.mark.asyncio
-async def test_real_ha_entity_platforms_register_78_enabled_entities(hass):
+async def test_real_ha_entity_platforms_register_79_enabled_entities(hass):
     entry = await add_entry(hass)
     runtime = SurisRuntime(hass, entry, device())
     entry.runtime_data = runtime
@@ -435,11 +463,11 @@ async def test_real_ha_entity_platforms_register_78_enabled_entities(hass):
         await module.async_setup_entry(hass, entry, add_entities)
     await hass.async_block_till_done()
     entries = er.async_entries_for_config_entry(er.async_get(hass), entry.entry_id)
-    assert len(entries) == 49
+    assert len(entries) == 50
     await bms_packet(runtime.device)
     await hass.async_block_till_done()
     entries = er.async_entries_for_config_entry(er.async_get(hass), entry.entry_id)
-    assert len(entries) == 78
+    assert len(entries) == 79
     assert all(e.disabled_by is None and e.hidden_by is None for e in entries)
     extra = [e for e in entries if e.device_id == runtime.battery_device_id]
     assert len(extra) == 29
@@ -512,7 +540,7 @@ async def test_ha_loader_and_managed_initial_config_flow(hass):
     from homeassistant import loader
     loader.async_setup(hass)
     integration = await loader.async_get_integration(hass,DOMAIN)
-    assert integration.version == '0.8.1b2'
+    assert integration.version == '0.8.1b3'
     assert integration.dependencies == ['bluetooth']
     await integration.async_get_platform('config_flow')
     manager = hass.config_entries.flow
