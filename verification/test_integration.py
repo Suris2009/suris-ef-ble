@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # Suris additions/adaptations, 2026. See NOTICE for upstream attribution.
 # This is an independently modified, unofficial integration.
-"""Offline regression tests using actual Home Assistant 2026.9 APIs.
+"""Offline regression tests using actual Home Assistant APIs.
 
 Transport/cloud and selected setup calls are mocked; core HA classes are real.
 Synthetic packets do not prove hardware behavior.
@@ -540,7 +540,7 @@ async def test_ha_loader_and_managed_initial_config_flow(hass):
     from homeassistant import loader
     loader.async_setup(hass)
     integration = await loader.async_get_integration(hass,DOMAIN)
-    assert integration.version == '0.8.1'
+    assert integration.version == '0.8.2b1'
     assert integration.dependencies == ['bluetooth']
     await integration.async_get_platform('config_flow')
     manager = hass.config_entries.flow

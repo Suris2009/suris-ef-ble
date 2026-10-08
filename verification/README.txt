@@ -5,6 +5,15 @@ DELTA 2 Max running firmware V1.0.0.204. After approximately 20 hours powered of
 the station connected within 1–2 seconds after power-on without a manual reload,
 and all sensors worked. Version 0.8.1 retains that BLE code.
 Use an isolated Python 3.14 environment, never a running Home Assistant install.
+Compatibility beta 0.8.2b1 passed all 36 tests on HA 2026.10.0 / protobuf 7.36.0
+and HA 2026.9.4 / protobuf 6.33.6 with Python 3.14.8. Transport and cloud login
+are mocked. A physical test of this beta remains pending.
+The exact HA 2026.10.0 environment is in requirements-ha2026.10.txt:
+
+python -m pip install -r verification/requirements-ha2026.10.txt
+PYTHONPATH=. python -m pytest -q verification/ --tb=short
+
+Historical verification:
 From the root of this repository or the unpacked release:
 
 python -m pip install -r verification/requirements-tested.txt

@@ -1,4 +1,4 @@
-name: Publish stable release
+name: Publish release
 
 on:
   workflow_dispatch:
@@ -22,7 +22,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
-      - name: Verify version 0.8.1 metadata
+      - name: Verify version 0.8.2b1 metadata
         run: |
           python3 - <<'PY'
           import json
@@ -30,7 +30,7 @@ jobs:
 
           component = Path("custom_components/suris_ef_ble_xboost")
           manifest = json.loads((component / "manifest.json").read_text(encoding="utf-8"))
-          if manifest["version"] != "0.8.1":
+          if manifest["version"] != "0.8.2b1":
               raise SystemExit(f"Unexpected version: {manifest['version']}")
           expected_name = "Suris EcoFlow BLE — 100% Local BLE (Unofficial)"
           if manifest["name"] != expected_name:
@@ -87,7 +87,7 @@ jobs:
           print(f"Verified HACS archive with {len(names)} entries")
           PY
 
-      - name: Publish stable release
+      - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -95,6 +95,12 @@ jobs:
           VERSION=$(python3 -c 'import json; print(json.load(open("custom_components/suris_ef_ble_xboost/manifest.json"))["version"])')
           TAG="v${VERSION}"
           TARGET_SHA=$(git rev-parse HEAD)
+          RELEASE_FLAGS=(--latest)
+          TITLE="Suris EcoFlow BLE ${VERSION} — 100% local BLE / No internet required — UNOFFICIAL"
+          if [[ "$VERSION" =~ b[0-9]+$ ]]; then
+            RELEASE_FLAGS=(--prerelease --latest=false)
+            TITLE="${TITLE} BETA"
+          fi
           ASSETS=(
             "dist/suris_ef_ble_${VERSION}.zip"
             "dist/suris_ef_ble_${VERSION}.zip.sha256"
@@ -104,13 +110,13 @@ jobs:
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" "${ASSETS[@]}" --clobber
             gh release edit "$TAG" \
-              --title "Suris EcoFlow BLE ${VERSION} — 100% local BLE / No internet required — UNOFFICIAL" \
+              --title "$TITLE" \
               --notes-file RELEASE_NOTES.md \
-              --latest
+              "${RELEASE_FLAGS[@]}"
           else
             gh release create "$TAG" "${ASSETS[@]}" \
               --target "$TARGET_SHA" \
-              --title "Suris EcoFlow BLE ${VERSION} — 100% local BLE / No internet required — UNOFFICIAL" \
+              --title "$TITLE" \
               --notes-file RELEASE_NOTES.md \
-              --latest
+              "${RELEASE_FLAGS[@]}"
           fi

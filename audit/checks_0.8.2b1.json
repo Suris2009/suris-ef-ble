@@ -1,0 +1,25 @@
+{
+  "version": "0.8.2b1",
+  "base": "0.8.1",
+  "date": "2026-10-08",
+  "python": "3.14.8",
+  "protobuf_requirement": "protobuf>=6.30,<8",
+  "test_command": "python -m pytest -q verification/ --tb=short",
+  "environments": [
+    {
+      "homeassistant": "2026.10.0",
+      "protobuf": "7.36.0",
+      "tests_passed": 36,
+      "warnings": 5
+    },
+    {
+      "homeassistant": "2026.9.4",
+      "protobuf": "6.33.6",
+      "tests_passed": 36,
+      "warnings": 5
+    }
+  ],
+  "transport": "Mocked BLE and cloud login; real Home Assistant classes",
+  "physical_beta_test": "Pending",
+  "runtime_changes": "Dependency range only; BLE implementation and entity IDs retained"
+}

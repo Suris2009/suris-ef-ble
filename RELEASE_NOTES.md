@@ -1,7 +1,7 @@
-# Suris EcoFlow BLE 0.8.1 — 100% local BLE / No internet required · UNOFFICIAL
+# Suris EcoFlow BLE 0.8.2b1 — 100% local BLE / No internet required · UNOFFICIAL BETA
 
-Stable release based on 0.8.1b3. The author confirmed Sound works on a
-physical DELTA 2 Max on 27 September 2026.
+Compatibility beta based on stable 0.8.1 for Home Assistant 2026.10.
+Stable 0.8.1 remains available; this release does not replace the stable channel.
 
 > [!CAUTION]
 > **UNOFFICIAL INTEGRATION. USE WITH CAUTION AND AT YOUR OWN RISK.**
@@ -12,23 +12,25 @@ This project is developed exclusively for the author's own Home Assistant
 installation and EcoFlow equipment. It is published as-is for transparency and
 reference, without any promise of support or compatibility with other installations.
 
-## Changes since 0.8.0
+## Changes since 0.8.1
 
-- AC Charging Speed, Max Charge Limit, and Min Discharge Limit use numeric
-  entry fields. AC charging can be paused and resumed without changing power.
-- Added a **Sound** switch for the DELTA 2 Max beeper. Its state comes from
-  the PD heartbeat quiet-mode value; the command sends the corresponding PD
-  quiet-mode packet over the existing authenticated BLE connection.
-- BLE connection recovery, existing sensors, controls, and entity IDs are
-  preserved from the beta builds.
+- Accept `protobuf>=6.30,<8` instead of `protobuf~=6.30`, resolving the
+  dependency conflict with protobuf 7.36.0 in Home Assistant 2026.10.0.
+- Retain compatibility with Home Assistant 2026.9.4 and protobuf 6.33.6.
+- Keep the BLE implementation, sensors, controls, settings and entity IDs from 0.8.1.
+- Publish a pre-release with the existing HACS archive layout and installed notices.
 
 ## Testing status
 
-In an isolated Python 3.14.7 environment with the pinned Home Assistant
-dependencies, **36 tests passed**. The new regression test checks the switch
-state, packet bytes, and disconnected behavior. The author also confirmed
-Sound works on a physical DELTA 2 Max. The release workflow validates JSON,
-Python syntax, installed license notices, and the HACS archive layout.
+All **36 automated tests passed** in each isolated Python 3.14.8 environment:
+
+- Home Assistant 2026.10.0 with protobuf 7.36.0.
+- Home Assistant 2026.9.4 with protobuf 6.33.6.
+
+Tests cover HA loading, setup, entity registration, recovery, cleanup, authentication
+flow and control packet generation. BLE transport and cloud login are mocked;
+physical-station testing of this beta is pending. The release workflow validates
+JSON, Python syntax, installed notices and the HACS archive layout.
 
 The author previously tested the retained BLE recovery behavior on an
 **EcoFlow DELTA 2 Max running firmware V1.0.0.204**. After approximately 20 hours
@@ -39,9 +41,10 @@ not yet been checked on a phone connected to a live Home Assistant installation.
 ## Installation assets
 
 - HACS: `suris_ef_ble_xboost.zip`
-- Full source, license, audit, and verification package: `suris_ef_ble_0.8.1.zip`
+- Full source, license, audit, and verification package: `suris_ef_ble_0.8.2b1.zip`
 
-Back up Home Assistant and keep version 0.8.0 available for rollback. Close the
+In HACS enable beta versions and select **v0.8.2b1**, then restart Home Assistant.
+Back up Home Assistant and keep version 0.8.1 available for rollback. Close the
 EcoFlow app while testing because the station supports only one active BLE client.
 
 **Thank you to [rabits](https://github.com/rabits), [GnoX](https://github.com/GnoX),

@@ -1,10 +1,12 @@
-# Suris EcoFlow BLE 0.8.1 — 100% local BLE, no internet required
+# Suris EcoFlow BLE 0.8.2b1 — 100% local BLE, no internet required
 
 **100% local BLE operation. Works without internet or EcoFlow cloud.**
 
 > [!CAUTION]
 > **UNOFFICIAL INTEGRATION — USE WITH CAUTION AND AT YOUR OWN RISK.**
-> Version 0.8.1 is the stable release after the 0.8.1b3 on-device test.
+> Version 0.8.2b1 is a compatibility beta based on stable 0.8.1.
+> It accepts protobuf 6 and 7 for Home Assistant 2026.9 and 2026.10.
+> Physical-station testing of this beta is pending; stable 0.8.1 remains available.
 > This project is not endorsed by EcoFlow and is not an official EcoFlow BLE / ha-ef-ble release.
 > **No warranties are provided. To the maximum extent permitted by law, the authors
 > and contributors accept no liability for its use or consequences.**
@@ -102,6 +104,12 @@ Existing XT60 controls, commands, authentication, sensors, and entity IDs are un
 
 ## Testing status
 
+For compatibility beta **0.8.2b1**, all **36 automated tests passed** on both
+**Home Assistant 2026.10.0 / protobuf 7.36.0** and
+**Home Assistant 2026.9.4 / protobuf 6.33.6**, using Python 3.14.8.
+BLE transport and cloud login are mocked. This beta has not yet been tested on
+a physical station; the following hardware results belong to earlier releases.
+
 The author reports a physical test on an **EcoFlow DELTA 2 Max running firmware
 V1.0.0.204**. After the station remained powered off for approximately 20 hours,
 version 0.8.0b6 connected within 1–2 seconds after power-on without a manual
@@ -137,7 +145,7 @@ as a custom repository:
 
 1. In HACS, open the top-right menu and select **Custom repositories**.
 2. Add `https://github.com/Suris2009/suris-ef-ble` with category **Integration**.
-3. Open the repository, select **Download** and select `v0.8.1`.
+3. Open the repository, select **Redownload**, enable beta versions and select `v0.8.2b1`.
 4. Restart Home Assistant before configuring or testing the integration.
 
 HACS downloads the dedicated `suris_ef_ble_xboost.zip` asset. Integration
@@ -146,7 +154,7 @@ files are stored directly at the archive root so HACS installs them into
 
 ### Manual installation
 
-1. Use the supplied `suris_ef_ble_0.8.1.zip`, or download it from
+1. Use the supplied `suris_ef_ble_0.8.2b1.zip`, or download it from
    [Releases](https://github.com/Suris2009/suris-ef-ble/releases).
 2. Extract the ZIP on your computer and locate `custom_components/suris_ef_ble_xboost`.
 3. Replace `/config/custom_components/suris_ef_ble_xboost` in Home Assistant with
