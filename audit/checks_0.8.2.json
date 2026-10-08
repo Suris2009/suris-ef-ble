@@ -1,0 +1,36 @@
+{
+  "version": "0.8.2",
+  "promoted_from": "0.8.2b1",
+  "date": "2026-10-08",
+  "runtime_changes": "None since 0.8.2b1; version metadata, documentation and release verification only",
+  "protobuf_requirement": "protobuf>=6.30,<8",
+  "inherited_regression_results": "36 tests passed on each environment for 0.8.2b1; see checks_0.8.2b1.json",
+  "promotion_test_command": "python -m pytest -q verification/test_integration.py::test_ha_loader_and_managed_initial_config_flow --tb=short",
+  "promotion_environments": [
+    {
+      "homeassistant": "2026.10.0",
+      "protobuf": "7.36.0",
+      "python": "3.14.8",
+      "tests_passed": 1,
+      "warnings": 5
+    },
+    {
+      "homeassistant": "2026.9.4",
+      "protobuf": "6.33.6",
+      "python": "3.14.8",
+      "tests_passed": 1,
+      "warnings": 5
+    }
+  ],
+  "checks": [
+    "JSON and Python syntax",
+    "Version and dependency metadata",
+    "Unchanged component runtime",
+    "Matching README copies",
+    "License and notice consistency",
+    "Source archive checksums",
+    "HACS archive root layout"
+  ],
+  "transport": "Mocked BLE and cloud login; real Home Assistant classes",
+  "physical_compatibility_test": "Pending"
+}

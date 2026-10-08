@@ -1,7 +1,7 @@
-# Suris EcoFlow BLE 0.8.2b1 — 100% local BLE / No internet required · UNOFFICIAL BETA
+# Suris EcoFlow BLE 0.8.2 — 100% local BLE / No internet required · UNOFFICIAL
 
-Compatibility beta based on stable 0.8.1 for Home Assistant 2026.10.
-Stable 0.8.1 remains available; this release does not replace the stable channel.
+Stable release promoted from 0.8.2b1 for Home Assistant 2026.10.
+The dependency fix and runtime behavior are retained from that beta.
 
 > [!CAUTION]
 > **UNOFFICIAL INTEGRATION. USE WITH CAUTION AND AT YOUR OWN RISK.**
@@ -18,18 +18,18 @@ reference, without any promise of support or compatibility with other installati
   dependency conflict with protobuf 7.36.0 in Home Assistant 2026.10.0.
 - Retain compatibility with Home Assistant 2026.9.4 and protobuf 6.33.6.
 - Keep the BLE implementation, sensors, controls, settings and entity IDs from 0.8.1.
-- Publish a pre-release with the existing HACS archive layout and installed notices.
+- Publish a stable release with the existing HACS archive layout and installed notices.
 
 ## Testing status
 
-All **36 automated tests passed** in each isolated Python 3.14.8 environment:
+For 0.8.2b1, all **36 automated tests passed** in each isolated Python 3.14.8 environment:
 
 - Home Assistant 2026.10.0 with protobuf 7.36.0.
 - Home Assistant 2026.9.4 with protobuf 6.33.6.
 
 Tests cover HA loading, setup, entity registration, recovery, cleanup, authentication
 flow and control packet generation. BLE transport and cloud login are mocked;
-physical-station testing of this beta is pending. The release workflow validates
+physical-station testing of the compatibility change remains pending. The release workflow validates
 JSON, Python syntax, installed notices and the HACS archive layout.
 
 The author previously tested the retained BLE recovery behavior on an
@@ -41,9 +41,9 @@ not yet been checked on a phone connected to a live Home Assistant installation.
 ## Installation assets
 
 - HACS: `suris_ef_ble_xboost.zip`
-- Full source, license, audit, and verification package: `suris_ef_ble_0.8.2b1.zip`
+- Full source, license, audit, and verification package: `suris_ef_ble_0.8.2.zip`
 
-In HACS enable beta versions and select **v0.8.2b1**, then restart Home Assistant.
+In HACS install stable **v0.8.2**, then restart Home Assistant.
 Back up Home Assistant and keep version 0.8.1 available for rollback. Close the
 EcoFlow app while testing because the station supports only one active BLE client.
 

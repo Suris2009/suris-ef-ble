@@ -1,7 +1,7 @@
 {
   "domain": "suris_ef_ble_xboost",
   "name": "Suris EcoFlow BLE — 100% Local BLE (Unofficial)",
-  "version": "0.8.2b1",
+  "version": "0.8.2",
   "config_flow": true,
   "dependencies": [
     "bluetooth"

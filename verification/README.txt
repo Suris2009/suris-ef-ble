@@ -7,7 +7,9 @@ and all sensors worked. Version 0.8.1 retains that BLE code.
 Use an isolated Python 3.14 environment, never a running Home Assistant install.
 Compatibility beta 0.8.2b1 passed all 36 tests on HA 2026.10.0 / protobuf 7.36.0
 and HA 2026.9.4 / protobuf 6.33.6 with Python 3.14.8. Transport and cloud login
-are mocked. A physical test of this beta remains pending.
+are mocked. A physical test of the compatibility change remains pending.
+Stable 0.8.2 promotes this beta without changing runtime behavior. Its version
+metadata, managed HA loader and archive layout are checked during promotion.
 The exact HA 2026.10.0 environment is in requirements-ha2026.10.txt:
 
 python -m pip install -r verification/requirements-ha2026.10.txt

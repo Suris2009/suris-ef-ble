@@ -1,12 +1,12 @@
-# Suris EcoFlow BLE 0.8.2b1 — 100% local BLE, no internet required
+# Suris EcoFlow BLE 0.8.2 — 100% local BLE, no internet required
 
 **100% local BLE operation. Works without internet or EcoFlow cloud.**
 
 > [!CAUTION]
 > **UNOFFICIAL INTEGRATION — USE WITH CAUTION AND AT YOUR OWN RISK.**
-> Version 0.8.2b1 is a compatibility beta based on stable 0.8.1.
+> Version 0.8.2 promotes compatibility beta 0.8.2b1 to stable.
 > It accepts protobuf 6 and 7 for Home Assistant 2026.9 and 2026.10.
-> Physical-station testing of this beta is pending; stable 0.8.1 remains available.
+> Physical-station testing of this compatibility change remains pending.
 > This project is not endorsed by EcoFlow and is not an official EcoFlow BLE / ha-ef-ble release.
 > **No warranties are provided. To the maximum extent permitted by law, the authors
 > and contributors accept no liability for its use or consequences.**
@@ -104,11 +104,12 @@ Existing XT60 controls, commands, authentication, sensors, and entity IDs are un
 
 ## Testing status
 
-For compatibility beta **0.8.2b1**, all **36 automated tests passed** on both
+Stable **0.8.2** retains the runtime behavior of compatibility beta **0.8.2b1**.
+For that beta, all **36 automated tests passed** on both
 **Home Assistant 2026.10.0 / protobuf 7.36.0** and
 **Home Assistant 2026.9.4 / protobuf 6.33.6**, using Python 3.14.8.
-BLE transport and cloud login are mocked. This beta has not yet been tested on
-a physical station; the following hardware results belong to earlier releases.
+BLE transport and cloud login are mocked. The compatibility change has not yet
+been tested on a physical station; the following hardware results belong to earlier releases.
 
 The author reports a physical test on an **EcoFlow DELTA 2 Max running firmware
 V1.0.0.204**. After the station remained powered off for approximately 20 hours,
@@ -120,7 +121,7 @@ after installing 0.8.1b3 on 27 September 2026.
 This single reported test does not establish coverage of every feature, firmware,
 Bluetooth environment, or configuration.
 
-For this 0.8.1 release, **36 tests passed** in the isolated Python 3.14.7
+For stable 0.8.1, **36 tests passed** in the isolated Python 3.14.7
 environment with the pinned Home Assistant dependencies. The new test verifies
 the beeper state, command bytes, and disconnected behavior. The release workflow
 also validates JSON, Python syntax, license notices, and the HACS archive layout.
@@ -145,7 +146,7 @@ as a custom repository:
 
 1. In HACS, open the top-right menu and select **Custom repositories**.
 2. Add `https://github.com/Suris2009/suris-ef-ble` with category **Integration**.
-3. Open the repository, select **Redownload**, enable beta versions and select `v0.8.2b1`.
+3. Open the repository and install stable **0.8.2**. If moving from a beta, select **Redownload** and choose `v0.8.2`.
 4. Restart Home Assistant before configuring or testing the integration.
 
 HACS downloads the dedicated `suris_ef_ble_xboost.zip` asset. Integration
@@ -154,7 +155,7 @@ files are stored directly at the archive root so HACS installs them into
 
 ### Manual installation
 
-1. Use the supplied `suris_ef_ble_0.8.2b1.zip`, or download it from
+1. Use the supplied `suris_ef_ble_0.8.2.zip`, or download it from
    [Releases](https://github.com/Suris2009/suris-ef-ble/releases).
 2. Extract the ZIP on your computer and locate `custom_components/suris_ef_ble_xboost`.
 3. Replace `/config/custom_components/suris_ef_ble_xboost` in Home Assistant with
