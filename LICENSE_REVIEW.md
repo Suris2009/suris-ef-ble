@@ -121,8 +121,8 @@ are unsupported by this build. Car Input 2 remains experimental.
 Application Python syntax trees were compared with input 0.8.0b3; only the VERSION
 constant changes executable code. License comments do not affect execution.
 Artwork hashes, configuration-field structure, translation placeholders, platform,
-domain, and dependencies were checked separately. English and Ukrainian setup
-translations remain; the Russian translation was removed at the owner's request.
+domain, and dependencies were checked separately. Only English and Ukrainian
+setup translations are included.
 Results: `audit/release_checks.json`; test log: `audit/tests_0.8.0b4.txt`.
 
 Automated publication checks used mocked BLE and cloud calls rather than a real
